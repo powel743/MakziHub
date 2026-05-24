@@ -41,10 +41,11 @@ export async function listingExpiryProcessor(job: Job): Promise<void> {
 
   if (toWarn && toWarn.length > 0) {
     for (const listing of toWarn) {
-      const user = listing.users as { email: string }[] | { email: string } | null
-      if (user?.email) {
+      const userRaw = listing.users
+      const email = Array.isArray(userRaw) ? userRaw[0]?.email : (userRaw as { email: string } | null)?.email
+      if (email) {
         await sendNotificationEmail({
-          to: user.email,
+          to: email,
           subject: 'Your listing expires in 7 days',
           html: `<p>Your listing at <strong>${listing.estate}</strong> expires in 7 days. <a href="https://makazihub.co.ke/lister/listings">Log in to confirm it's still available</a>.</p>`,
         })

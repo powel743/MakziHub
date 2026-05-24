@@ -8,6 +8,7 @@ export interface JwtPayload {
   plan?: string
   iat?: number
   exp?: number
+  type?: string
 }
 
 export async function requireAuth(
