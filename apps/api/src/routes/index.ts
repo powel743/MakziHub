@@ -11,6 +11,7 @@ import { reportsRoutes } from './reports/reports.routes'
 import { notificationsRoutes } from './notifications/notifications.routes'
 import { adminRoutes } from './admin/admin.routes'
 import { escrowRoutes } from './escrow/escrow.routes'
+import { listerRoutes } from './lister/lister.routes'
 
 export async function registerRoutes(fastify: FastifyInstance): Promise<void> {
   fastify.register(authRoutes, { prefix: '/auth' })
@@ -25,4 +26,5 @@ export async function registerRoutes(fastify: FastifyInstance): Promise<void> {
   fastify.register(notificationsRoutes, { prefix: '/notifications' })
   fastify.register(adminRoutes, { prefix: '/admin' })
   fastify.register(escrowRoutes, { prefix: '/escrow' })
+  fastify.register(listerRoutes, { prefix: '/lister' })
 }
