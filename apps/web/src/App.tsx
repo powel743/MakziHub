@@ -106,37 +106,37 @@ function AppRoutes() {
 
             {/* Lister */}
             <Route path="/lister" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><Navigate to="/lister/dashboard" replace /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><Navigate to="/lister/dashboard" replace /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/dashboard" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><ListerDashboard /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><ListerDashboard /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/listings" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><MyListings /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><MyListings /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/listings/new" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><AddEditListing /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><AddEditListing /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/listings/:id/edit" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><AddEditListing /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><AddEditListing /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/inquiries" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><InquiriesInbox /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><InquiriesInbox /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/analytics" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><Analytics /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><Analytics /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/import" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><CsvImport /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><CsvImport /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/team" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><TeamMembers /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><TeamMembers /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/billing" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><ListerBilling /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><ListerBilling /></RoleGuard></ProtectedRoute>
             } />
             <Route path="/lister/verification" element={
-              <ProtectedRoute><RoleGuard allowedRoles={['lister', 'agency']}><Verification /></RoleGuard></ProtectedRoute>
+              <ProtectedRoute><RoleGuard allowedRoles={['landlord', 'caretaker', 'agency']}><Verification /></RoleGuard></ProtectedRoute>
             } />
 
             {/* Admin */}
