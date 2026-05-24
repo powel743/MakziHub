@@ -1,6 +1,7 @@
-// All SMS template functions for MakaziHub
-// Each function returns a typed SMS message string
+// SMS templates — disabled until Africa's Talking goes live
+// Uncomment and use with sendSms() when AT credentials are active
 
+/*
 export const smsTemplates = {
   signupOtp: (otp: string): string =>
     `Your MakaziHub verification code is ${otp}. Valid for 10 minutes. Do not share this code.`,
@@ -44,3 +45,7 @@ export const smsTemplates = {
   escrowAutoRefunded: (estate: string): string =>
     `Your holding deposit for ${estate} has been refunded to your M-Pesa as the move-in was not confirmed within 7 days.`,
 }
+*/
+
+// Placeholder export so imports don't break
+export const smsTemplates = {} as Record<string, never>

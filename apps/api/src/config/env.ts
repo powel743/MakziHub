@@ -18,9 +18,13 @@ const envSchema = z.object({
   MPESA_ENV: z.enum(['sandbox', 'production']).default('sandbox'),
 
   // Africa's Talking
-  AT_API_KEY: z.string().min(1),
-  AT_USERNAME: z.string().min(1),
-  AT_SENDER_ID: z.string().min(1),
+  //AT_API_KEY: z.string().min(1),
+  //AT_USERNAME: z.string().min(1),
+  //AT_SENDER_ID: z.string().min(1),
+
+   // Resend (email OTP + notifications)
+  RESEND_API_KEY: z.string().min(1),
+  EMAIL_FROM: z.string().default('MakaziHub <noreply@makazihub.co.ke>'),
 
   // Cloudinary
   CLOUDINARY_CLOUD_NAME: z.string().min(1),

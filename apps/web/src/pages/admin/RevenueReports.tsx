@@ -82,7 +82,7 @@ export default function RevenueReports() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                   <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
-                  <Tooltip formatter={(val: number) => formatKES(val)} />
+                  <Tooltip formatter={(val) => formatKES(Number(val))} />
                   <Bar dataKey="amount" fill="#16a34a" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
