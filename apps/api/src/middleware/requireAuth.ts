@@ -10,12 +10,6 @@ export interface JwtPayload {
   exp?: number
 }
 
-declare module 'fastify' {
-  interface FastifyRequest {
-    user: JwtPayload
-  }
-}
-
 export async function requireAuth(
   request: FastifyRequest,
   reply: FastifyReply

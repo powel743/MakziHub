@@ -56,7 +56,7 @@ export async function registerUser(input: RegisterInput) {
   }
 
   // Send OTP
-  await sendOtp({ phone: input.phone })
+  await sendOtp({ phone: input.phone, email: input.email })
 
   return { user_id: userId, email: input.email, role: input.role }
 }
