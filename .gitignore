@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.vite/
+
+# Environment files - NEVER commit these
+.env
+.env.local
+.env.production
+apps/api/.env
+apps/web/.env
+
+# Logs
+*.log
+pino*.log
+
+# OS
+.DS_Store
+
+# Supabase
+supabase/.temp/
