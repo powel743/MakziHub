@@ -65,6 +65,10 @@ export async function sendSms({ to, message }: SendSmsParams): Promise<void> {
 */
 // ─────────────────────────────────────────────────────────────────────────────
 
+export async function sendSms({ to, message }: { to: string | string[]; message: string }): Promise<void> {
+  logger.info({ to, message }, "SMS sending mocked (Africa's Talking disabled)")
+}
+
 export async function sendOtp({ phone, email }: { phone: string; email: string }): Promise<string> {
   const otp = generateOtp()
   const key = `otp:${phone}`

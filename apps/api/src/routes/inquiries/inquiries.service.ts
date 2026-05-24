@@ -1,7 +1,8 @@
 import { supabaseAdmin } from '../../config/supabase'
 import { mpesaService } from '../../services/mpesa.service'
-import { sendSms } from '../../services/africasTalking.service'
-import { smsTemplates } from '../../services/sms-templates'
+import { sendNotificationEmail } from '../../services/africasTalking.service'
+//import { sendSms } from '../../services/africasTalking.service'
+//import { smsTemplates } from '../../services/sms-templates'
 import { paymentQueue } from '../../jobs/queue'
 import { notFound, unprocessable, conflict } from '../../utils/errors'
 
@@ -149,7 +150,7 @@ export async function getTenantInquiries(tenantUserId: string) {
   if (error) throw unprocessable(error.message)
 
   return (data ?? []).map((inq) => {
-    const listing = inq.listings as {
+    const listing = inq.listings as unknown as {
       id: string; title: string; estate: string; rent_ksh: number;
       house_type: string; address: string;
       listing_photos: Array<{ url: string; order: number }>
@@ -222,14 +223,15 @@ async function getContactDetails(listingId: string) {
 async function notifyLister(listerUserId: string, estate: string) {
   const { data: user } = await supabaseAdmin
     .from('users')
-    .select('phone')
+    .select('email')
     .eq('id', listerUserId)
     .single()
 
-  if (user?.phone) {
-    await sendSms({
-      to: user.phone,
-      message: smsTemplates.contactUnlocked(estate),
+  if (user?.email) {
+    await sendNotificationEmail({
+      to: user.email,
+      subject: 'Someone unlocked your listing',
+      html: `<p>A tenant just unlocked your <strong>${estate}</strong> listing. Check your <a href="https://makazihub.co.ke/lister/inbox">MakaziHub inbox</a>.</p>`,
     })
   }
 }

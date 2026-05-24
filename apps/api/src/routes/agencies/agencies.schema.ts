@@ -14,11 +14,11 @@ export const inviteMemberSchema = z.object({
 
 export const csvRowSchema = z.object({
   title: z.string().min(5).max(200),
-  estate: z.enum(APPROVED_ESTATES as [string, ...string[]]),
+  estate: z.enum(APPROVED_ESTATES as unknown as [string, ...string[]]),
   address: z.string().min(5).max(300),
   rent_ksh: z.coerce.number().int().positive(),
   deposit_ksh: z.coerce.number().int().nonnegative().optional(),
-  house_type: z.enum(HOUSE_TYPES as [string, ...string[]]),
+  house_type: z.enum(HOUSE_TYPES as unknown as [string, ...string[]]),
   bedrooms: z.coerce.number().int().nonnegative(),
   bathrooms: z.coerce.number().int().nonnegative(),
   available_from: z.string().refine((d) => !isNaN(Date.parse(d)), 'Invalid date'),

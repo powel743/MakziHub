@@ -1,7 +1,8 @@
 import { supabaseAdmin } from '../../config/supabase'
 import { mpesaService, extractCallbackMeta, DarajaCallbackBody } from '../../services/mpesa.service'
-import { sendSms } from '../../services/africasTalking.service'
-import { smsTemplates } from '../../services/sms-templates'
+import { sendNotificationEmail } from '../../services/africasTalking.service'
+// import { sendSms } from '../../services/africasTalking.service' // Re-enable with AT
+// import { smsTemplates } from '../../services/sms-templates' // Re-enable with AT
 import { paymentQueue } from '../../jobs/queue'
 import { notFound, unprocessable } from '../../utils/errors'
 import { CREDIT_BUNDLES, SUBSCRIPTION_PLANS, BOOST_PRICES } from './payments.schema'
@@ -22,7 +23,6 @@ export async function handleMpesaCallback(body: DarajaCallbackBody) {
     return
   }
 
-  // Avoid double-processing
   if (payment.status !== 'pending') {
     logger.info({ paymentId: payment.id, status: payment.status }, 'Payment already processed')
     return
@@ -30,44 +30,44 @@ export async function handleMpesaCallback(body: DarajaCallbackBody) {
 
   const { data: user } = await supabaseAdmin
     .from('users')
-    .select('phone')
+    .select('phone, email')
     .eq('id', payment.user_id)
     .single()
 
   if (ResultCode !== 0) {
-    // Payment failed
     await supabaseAdmin
       .from('payments')
       .update({ status: 'failed' })
       .eq('id', payment.id)
 
-    if (user?.phone) {
-      await sendSms({ to: user.phone, message: smsTemplates.paymentFailed() })
+    // SMS disabled — notify via email instead
+    if (user?.email) {
+      await sendNotificationEmail({
+        to: user.email,
+        subject: 'MakaziHub Payment Failed',
+        html: `<p>Your M-Pesa payment of KES ${payment.amount_ksh} did not go through. Please try again.</p>`,
+      })
     }
     logger.info({ paymentId: payment.id, ResultDesc }, 'M-Pesa payment failed')
     return
   }
 
-  // Payment succeeded
   const meta = extractCallbackMeta(callback)
   await supabaseAdmin
     .from('payments')
     .update({ status: 'complete', mpesa_receipt: meta.mpesaReceiptNumber })
     .eq('id', payment.id)
 
-  // Take action based on payment type
   switch (payment.type) {
     case 'unlock': {
       const listingId = (payment.metadata as { listing_id?: string })?.listing_id
       if (!listingId) break
 
-      // Mark inquiry as unlocked
       await supabaseAdmin
         .from('inquiries')
         .update({ unlocked_at: new Date().toISOString() })
         .eq('payment_id', payment.id)
 
-      // Notify lister
       const { data: listing } = await supabaseAdmin
         .from('listings')
         .select('estate, lister_user_id')
@@ -77,13 +77,14 @@ export async function handleMpesaCallback(body: DarajaCallbackBody) {
       if (listing) {
         const { data: listerUser } = await supabaseAdmin
           .from('users')
-          .select('phone')
+          .select('email')
           .eq('id', listing.lister_user_id)
           .single()
-        if (listerUser?.phone) {
-          await sendSms({
-            to: listerUser.phone,
-            message: smsTemplates.contactUnlocked(listing.estate),
+        if (listerUser?.email) {
+          await sendNotificationEmail({
+            to: listerUser.email,
+            subject: 'Someone unlocked your listing',
+            html: `<p>A tenant just unlocked your <strong>${listing.estate}</strong> listing. Check your <a href="https://makazihub.co.ke/lister/inbox">MakaziHub inbox</a>.</p>`,
           })
         }
       }
@@ -115,14 +116,14 @@ export async function handleMpesaCallback(body: DarajaCallbackBody) {
     }
 
     case 'boost': {
-      const meta = payment.metadata as { listing_id?: string; days?: number }
-      if (!meta.listing_id || !meta.days) break
+      const boostMeta = payment.metadata as { listing_id?: string; days?: number }
+      if (!boostMeta.listing_id || !boostMeta.days) break
 
       const endsAt = new Date()
-      endsAt.setDate(endsAt.getDate() + meta.days)
+      endsAt.setDate(endsAt.getDate() + boostMeta.days)
 
       await supabaseAdmin.from('boosts').insert({
-        listing_id: meta.listing_id,
+        listing_id: boostMeta.listing_id,
         lister_user_id: payment.user_id,
         amount_ksh: payment.amount_ksh,
         starts_at: new Date().toISOString(),
@@ -133,7 +134,7 @@ export async function handleMpesaCallback(body: DarajaCallbackBody) {
       await supabaseAdmin
         .from('listings')
         .update({ featured_until: endsAt.toISOString() })
-        .eq('id', meta.listing_id)
+        .eq('id', boostMeta.listing_id)
       break
     }
 

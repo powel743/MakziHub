@@ -28,7 +28,7 @@ export async function getListingByIdHandler(request: FastifyRequest, reply: Fast
   const userId = request.user?.sub
   const result = await getListingById(id, userId)
   if ('statusCode' in result) {
-    return reply.status(result.statusCode).send({ error: result.error, code: result.code })
+    return reply.status(result.statusCode ?? 500).send({ error: result.error, code: result.code })
   }
   reply.send(result)
 }
@@ -114,7 +114,7 @@ export async function deletePhotoHandler(request: FastifyRequest, reply: Fastify
 
   if (!photo) throw notFound('Photo not found')
 
-  const lister = photo.listings as { lister_user_id: string } | null
+  const lister = photo.listings as unknown as { lister_user_id: string } | null
   if (lister?.lister_user_id !== request.user.sub && request.user.role !== 'admin') {
     throw forbidden('You do not own this listing')
   }

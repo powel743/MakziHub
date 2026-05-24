@@ -17,7 +17,7 @@ export async function getSavedListings(userId: string) {
   if (error) throw unprocessable(error.message)
 
   return (data ?? []).map((s) => {
-    const listing = s.listings as {
+    const listing = s.listings as unknown as {
       id: string; title: string; estate: string; rent_ksh: number
       bedrooms: number; house_type: string; status: string; available_from: string
       listing_photos: Array<{ url: string; order: number }>
