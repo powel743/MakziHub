@@ -25,7 +25,7 @@ export async function planExpiryProcessor(job: Job): Promise<void> {
   }
 
   for (const profile of expiringSoon ?? []) {
-    const user = profile.users as { phone: string } | null
+    const user = profile.users as unknown as unknown as { phone: string } | null
     const expiresAt = new Date(profile.plan_expires_at!).toLocaleDateString('en-KE', {
       day: 'numeric',
       month: 'long',
@@ -61,7 +61,7 @@ export async function planExpiryProcessor(job: Job): Promise<void> {
   }
 
   for (const profile of expired ?? []) {
-    const user = profile.users as { phone: string } | null
+    const user = profile.users as unknown as unknown as { phone: string } | null
 
     await supabaseAdmin
       .from('lister_profiles')

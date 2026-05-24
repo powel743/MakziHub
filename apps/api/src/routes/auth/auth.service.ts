@@ -1,10 +1,10 @@
+import { FastifyInstance } from 'fastify'
 import { supabase, supabaseAdmin } from '../../config/supabase'
 import { sendOtp, verifyOtp as checkOtp } from '../../services/africasTalking.service'
 import { conflict, unauthorized, unprocessable } from '../../utils/errors'
 import type { RegisterInput, LoginInput, VerifyOtpInput } from './auth.schema'
 
 export async function registerUser(input: RegisterInput) {
-  // Check if email or phone already exists
   const { data: existing } = await supabaseAdmin
     .from('users')
     .select('id')
@@ -13,7 +13,6 @@ export async function registerUser(input: RegisterInput) {
 
   if (existing) throw conflict('Email or phone already registered')
 
-  // Create user in Supabase Auth
   const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
     email: input.email,
     password: input.password,
@@ -26,7 +25,6 @@ export async function registerUser(input: RegisterInput) {
 
   const userId = authData.user.id
 
-  // Insert into users table
   const { error: userError } = await supabaseAdmin.from('users').insert({
     id: userId,
     email: input.email,
@@ -40,7 +38,6 @@ export async function registerUser(input: RegisterInput) {
     throw unprocessable(userError.message)
   }
 
-  // Create profile based on role
   if (input.role === 'tenant') {
     await supabaseAdmin.from('tenant_profiles').insert({
       user_id: userId,
@@ -55,7 +52,6 @@ export async function registerUser(input: RegisterInput) {
     })
   }
 
-  // Send OTP
   await sendOtp({ phone: input.phone, email: input.email })
 
   return { user_id: userId, email: input.email, role: input.role }
@@ -63,9 +59,8 @@ export async function registerUser(input: RegisterInput) {
 
 export async function verifyOtpAndLogin(
   input: VerifyOtpInput,
-  fastifyInstance: { jwt: { sign: (payload: object) => string } }
+  fastifyInstance: FastifyInstance
 ) {
-  // Find user by phone
   const { data: user } = await supabaseAdmin
     .from('users')
     .select('id, email, role')
@@ -77,7 +72,6 @@ export async function verifyOtpAndLogin(
   const valid = await checkOtp(input.phone, input.otp)
   if (!valid) throw unauthorized('Invalid or expired OTP')
 
-  // Mark phone as verified
   await supabaseAdmin
     .from('users')
     .update({ verified_phone: true })
@@ -90,10 +84,7 @@ export async function verifyOtpAndLogin(
   return { verified: true, access_token, refresh_token }
 }
 
-export async function loginUser(
-  input: LoginInput,
-  fastifyInstance: { jwt: { sign: (payload: object) => string } }
-) {
+export async function loginUser(input: LoginInput, fastifyInstance: FastifyInstance) {
   const { data: authData, error } = await supabase.auth.signInWithPassword({
     email: input.email,
     password: input.password,
@@ -111,7 +102,6 @@ export async function loginUser(
   if (user.banned) throw unauthorized('Account has been banned')
   if (user.suspended) throw unauthorized('Account is suspended. Please contact support.')
 
-  // Get plan if lister
   let plan = 'free'
   if (['landlord', 'caretaker', 'agency'].includes(user.role)) {
     const { data: lp } = await supabaseAdmin
@@ -135,12 +125,7 @@ export async function loginUser(
 
 export async function refreshAccessToken(
   refreshToken: string,
-  fastifyInstance: {
-    jwt: {
-      verify: (token: string) => { sub: string; email: string; role: string; plan?: string; type?: string }
-      sign: (payload: object) => string
-    }
-  }
+  fastifyInstance: FastifyInstance
 ) {
   let decoded: { sub: string; email: string; role: string; plan?: string; type?: string }
   try {
@@ -158,9 +143,8 @@ export async function refreshAccessToken(
 }
 
 export async function forgotPassword(email: string) {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${process.env.FRONTEND_URL}/auth/reset-password`,
   })
-  // Don't reveal if email exists or not
   return { message: 'If that email is registered, you will receive a reset link shortly.' }
 }

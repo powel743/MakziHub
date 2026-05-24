@@ -57,7 +57,7 @@ export async function fraudAggregatorProcessor(job: Job<{ listingId: string }>):
   if (recentInquiries && recentInquiries.length > 0) {
     for (const inquiry of recentInquiries) {
       // Issue credit refund to tenant
-      const user = inquiry.users as { phone: string } | null
+      const user = inquiry.users as unknown as unknown as { phone: string } | null
 
       // Increment tenant's free_credits by 1
       const { data: profile } = await supabaseAdmin

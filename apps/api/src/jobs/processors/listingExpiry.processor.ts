@@ -41,7 +41,7 @@ export async function listingExpiryProcessor(job: Job): Promise<void> {
 
   if (toWarn && toWarn.length > 0) {
     for (const listing of toWarn) {
-      const user = listing.users as { email: string } | null
+      const user = listing.users as { email: string }[] | { email: string } | null
       if (user?.email) {
         await sendNotificationEmail({
           to: user.email,

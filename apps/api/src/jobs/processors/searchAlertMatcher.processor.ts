@@ -47,7 +47,7 @@ export async function searchAlertMatcherProcessor(
   logger.info({ listingId, matchCount: matchingAlerts.length }, 'Matched search alerts')
 
   for (const alert of matchingAlerts) {
-    const user = alert.users as { phone: string } | null
+    const user = alert.users as unknown as unknown as { phone: string } | null
     if (!user?.phone) continue
 
     await sendSms({
