@@ -54,7 +54,7 @@ export const CREDIT_BUNDLES = {
 
 export const NAIROBI_CENTER: [number, number] = [-1.2921, 36.8219]
 
-export type UserRole = 'tenant' | 'lister' | 'agency' | 'admin'
+export type UserRole = 'tenant' | 'landlord' | 'caretaker' | 'lister' | 'agency' | 'admin'
 export type VerifiedTier = 'none' | 'phone' | 'id' | 'visited'
 export type ListingStatus = 'available' | 'taken' | 'suspended' | 'expired'
 export type PlanType = 'free' | 'pro' | 'business'
