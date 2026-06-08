@@ -10,8 +10,15 @@ export default function SavedListings() {
   const { data: saved = [], isLoading } = useQuery<Listing[]>({
     queryKey: ['saved-listings'],
     queryFn: async () => {
-      const res = await client.get('/listings/saved')
-      return res.data.data || []
+      // API serves saved listings at GET /saves → { saved: [{ listing }] }
+      const res = await client.get('/saves')
+      return (res.data.saved || [])
+        .map((s: { listing: (Listing & { cover_photo?: string | null }) | null }) =>
+          s.listing
+            ? { ...s.listing, cover_photo_url: s.listing.cover_photo ?? null }
+            : null
+        )
+        .filter(Boolean) as Listing[]
     },
   })
 

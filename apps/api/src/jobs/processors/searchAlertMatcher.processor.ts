@@ -53,6 +53,7 @@ export async function searchAlertMatcherProcessor(
     await sendSms({
       to: user.phone,
       message: smsTemplates.searchAlertMatch(bedrooms, estate, rentKsh, listingId),
+      template: 'searchAlertMatch',
     })
 
     // Create in-app notification

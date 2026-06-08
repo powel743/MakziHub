@@ -4,14 +4,17 @@ import { Helmet } from 'react-helmet-async'
 import { verifyOtp } from '../../api/auth.api'
 import { useAuthStore } from '../../store/auth.store'
 import { Button } from '../../components/ui/Button'
-import { Smartphone } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import toast from 'react-hot-toast'
 import logoSrc from '../../assets/logo.svg'
+import { maskEmail } from '../../utils/format'
 
 export default function OtpPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  // Phone is still the backend's OTP key; email is what the code is delivered to.
   const phone = (location.state as any)?.phone || ''
+  const email = (location.state as any)?.email || ''
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [loading, setLoading] = useState(false)
   const [cooldown, setCooldown] = useState(60)
@@ -54,7 +57,7 @@ export default function OtpPage() {
       const data = await verifyOtp({ phone: `+254${phone.slice(1)}`, otp: code })
       setTokens(data.access_token, data.refresh_token)
       setUser(data.user)
-      toast.success('Phone verified!')
+      toast.success('Email verified!')
       navigate('/auth/role')
     } catch {
       toast.error('Invalid OTP. Please try again.')
@@ -74,12 +77,12 @@ export default function OtpPage() {
 
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
             <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-              <Smartphone className="w-7 h-7 text-primary" />
+              <Mail className="w-7 h-7 text-primary" />
             </div>
 
-            <h1 className="text-xl font-bold font-display text-gray-900 mb-1">Verify your phone</h1>
+            <h1 className="text-xl font-bold font-display text-gray-900 mb-1">Verify your email</h1>
             <p className="text-sm text-gray-500 mb-6">
-              Enter the 6-digit code sent to <strong>{phone}</strong>
+              Enter the 6-digit code sent to <strong>{email ? maskEmail(email) : 'your email'}</strong>
             </p>
 
             {/* OTP inputs */}

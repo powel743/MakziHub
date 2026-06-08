@@ -12,7 +12,8 @@ import { uploadImage } from '../../services/cloudinary.service'
 import { supabaseAdmin } from '../../config/supabase'
 import { deleteImage } from '../../services/cloudinary.service'
 import { notFound, forbidden, unprocessable } from '../../utils/errors'
-import { listingQueue } from '../../jobs/queue'
+import { fraudAggregatorQueue } from '../../jobs/queue'
+import { initiateBoost } from '../payments/payments.service'
 
 export async function getListingsHandler(request: FastifyRequest, reply: FastifyReply) {
   const parsed = listingsQuerySchema.safeParse(request.query)
@@ -132,6 +133,16 @@ export async function toggleSaveHandler(request: FastifyRequest, reply: FastifyR
   reply.send(result)
 }
 
+export async function boostListingHandler(request: FastifyRequest, reply: FastifyReply) {
+  const { id } = request.params as { id: string }
+  const { plan } = request.body as { plan?: string }
+  if (!plan || !['7day', '14day', '30day'].includes(plan)) {
+    throw unprocessable('plan must be one of: 7day, 14day, 30day')
+  }
+  const result = await initiateBoost(id, plan, request.user.sub, request.user.role)
+  reply.status(202).send(result)
+}
+
 export async function reportListingHandler(request: FastifyRequest, reply: FastifyReply) {
   const { id } = request.params as { id: string }
   const { reason, note } = request.body as { reason: string; note?: string }
@@ -162,7 +173,7 @@ export async function reportListingHandler(request: FastifyRequest, reply: Fasti
   if (error) throw unprocessable(error.message)
 
   // Queue fraud aggregation
-  await listingQueue.add('fraud-report-aggregator', { listingId: id })
+  await fraudAggregatorQueue.add('fraud-report-aggregator', { listingId: id })
 
   reply.status(201).send({ message: 'Report submitted', report_id: report.id })
 }

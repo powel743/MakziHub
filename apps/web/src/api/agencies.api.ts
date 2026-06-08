@@ -24,10 +24,10 @@ export const previewImport = async (agencyId: string, file: File) => {
   return res.data
 }
 
-export const confirmImport = async (agencyId: string, importSessionId: string, skipErrors = true) => {
+export const confirmImport = async (agencyId: string, validRows: unknown[]) => {
+  // Backend creates the import session from the validated rows returned by preview.
   const res = await client.post(`/agencies/${agencyId}/import/confirm`, {
-    import_session_id: importSessionId,
-    skip_errors: skipErrors,
+    valid_rows: validRows,
   })
   return res.data
 }

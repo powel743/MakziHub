@@ -7,5 +7,5 @@ export const getNotifications = async (): Promise<Notification[]> => {
 }
 
 export const markNotificationsRead = async () => {
-  await client.post('/notifications/read-all')
+  await client.post('/notifications/mark-all-read')
 }

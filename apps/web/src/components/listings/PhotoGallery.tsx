@@ -14,9 +14,11 @@ import 'swiper/css/free-mode'
 interface PhotoGalleryProps {
   photos: ListingPhoto[]
   title?: string
+  estate?: string
 }
 
-export function PhotoGallery({ photos, title }: PhotoGalleryProps) {
+export function PhotoGallery({ photos, title, estate }: PhotoGalleryProps) {
+  const altText = `${title || 'Listing'}${estate ? ` — ${estate}, Nairobi` : ''}`
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null)
 
   if (!photos || photos.length === 0) {
@@ -39,12 +41,15 @@ export function PhotoGallery({ photos, title }: PhotoGalleryProps) {
         className="aspect-[16/9] rounded-2xl overflow-hidden"
         style={{ '--swiper-navigation-color': '#16a34a' } as React.CSSProperties}
       >
-        {photos.map((photo) => (
+        {photos.map((photo, idx) => (
           <SwiperSlide key={photo.id}>
             <img
               src={photo.url}
-              alt={title || 'Listing photo'}
+              alt={altText}
               className="w-full h-full object-cover"
+              {...(idx === 0
+                ? ({ fetchpriority: 'high', loading: 'eager' } as Record<string, string>)
+                : { loading: 'lazy' })}
             />
           </SwiperSlide>
         ))}

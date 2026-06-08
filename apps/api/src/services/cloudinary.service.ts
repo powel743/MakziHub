@@ -18,18 +18,28 @@ export async function uploadImage(
     folder?: string
     publicId?: string
     transformation?: object[]
+    /** Use 'auto' for documents that may be PDF (e.g. ID verification) */
+    resourceType?: 'image' | 'auto' | 'raw'
   } = {}
 ): Promise<UploadResult> {
+  const resourceType = options.resourceType ?? 'image'
+  // Only coerce to webp + resize for actual images; PDFs/raw pass through.
+  const imageOnly =
+    resourceType === 'image'
+      ? {
+          format: 'webp',
+          transformation: options.transformation ?? [
+            { width: 1280, height: 960, crop: 'limit', quality: 'auto:good' },
+          ],
+        }
+      : {}
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder: options.folder ?? 'makazihub/listings',
         public_id: options.publicId,
-        resource_type: 'image',
-        format: 'webp',
-        transformation: options.transformation ?? [
-          { width: 1280, height: 960, crop: 'limit', quality: 'auto:good' },
-        ],
+        resource_type: resourceType,
+        ...imageOnly,
       },
       (error, result) => {
         if (error || !result) {

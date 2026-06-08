@@ -44,7 +44,7 @@ export function ListingCard({ listing }: ListingCardProps) {
         {coverPhoto ? (
           <img
             src={coverPhoto}
-            alt={listing.title}
+            alt={`${listing.title} — ${listing.estate}, Nairobi`}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
@@ -72,12 +72,15 @@ export function ListingCard({ listing }: ListingCardProps) {
           </button>
         )}
 
-        {/* Verified badge overlay */}
-        {listing.verified_tier !== 'none' && (
-          <div className="absolute bottom-3 left-3">
-            <VerifiedBadge tier={listing.verified_tier} />
-          </div>
-        )}
+        {/* Verified badge overlay — prefer the lister's ID-verified status */}
+        {(() => {
+          const badgeTier = listing.lister_id_verified ? 'id' : listing.verified_tier
+          return badgeTier !== 'none' ? (
+            <div className="absolute bottom-3 left-3">
+              <VerifiedBadge tier={badgeTier} />
+            </div>
+          ) : null
+        })()}
 
         {/* Featured label */}
         {listing.status === 'available' && listing.saved_count > 10 && (

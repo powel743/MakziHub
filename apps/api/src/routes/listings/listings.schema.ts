@@ -13,8 +13,12 @@ export const createListingSchema = z.object({
   address: z.string().min(5).max(300),
   lat: z.number().optional(),
   lng: z.number().optional(),
-  rent_ksh: z.number().int().positive(),
-  deposit_ksh: z.number().int().nonnegative().optional(),
+  // Rent must be a whole number of KES (no decimals, no currency conversion)
+  rent_ksh: z
+    .number({ invalid_type_error: 'Rent must be a number in KES' })
+    .int('Rent must be a whole number of KES (no decimals)')
+    .positive('Rent must be greater than 0'),
+  deposit_ksh: z.number().int('Deposit must be a whole number of KES').nonnegative().optional(),
   house_type: z.enum(HOUSE_TYPES as unknown as [string, ...string[]]),
   bedrooms: z.number().int().nonnegative(),
   bathrooms: z.number().int().nonnegative(),

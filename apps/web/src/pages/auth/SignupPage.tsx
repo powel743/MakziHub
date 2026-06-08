@@ -35,8 +35,8 @@ export default function SignupPage() {
         password: data.password,
         role: 'tenant',
       })
-      toast.success('Account created! Check your phone for OTP.')
-      navigate('/auth/verify', { state: { phone: data.phone } })
+      toast.success('Account created! Check your email for the verification code.')
+      navigate('/auth/verify', { state: { phone: data.phone, email: data.email } })
     } catch (err: any) {
       toast.error(err?.response?.data?.error || 'Registration failed. Please try again.')
     }

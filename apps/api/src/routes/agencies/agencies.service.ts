@@ -124,6 +124,40 @@ export async function inviteMember(
   return { message: 'Member added successfully', member }
 }
 
+export async function getAgencyMembers(agencyId: string) {
+  const { data: members, error } = await supabaseAdmin
+    .from('agency_members')
+    .select('id, user_id, role, created_at, users!user_id(email, phone)')
+    .eq('agency_id', agencyId)
+    .order('created_at', { ascending: true })
+
+  if (error) throw unprocessable(error.message)
+
+  const userIds = (members ?? []).map((m) => m.user_id)
+  // Names live on lister_profiles (agency_members aren't a direct FK to it)
+  const nameByUser = new Map<string, string>()
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabaseAdmin
+      .from('lister_profiles')
+      .select('user_id, full_name')
+      .in('user_id', userIds)
+    for (const p of profiles ?? []) nameByUser.set(p.user_id, p.full_name)
+  }
+
+  return (members ?? []).map((m) => {
+    const u = (Array.isArray(m.users) ? m.users[0] : m.users) as { email: string; phone: string } | null
+    return {
+      id: m.id,
+      user_id: m.user_id,
+      name: nameByUser.get(m.user_id) ?? null,
+      email: u?.email ?? null,
+      role: m.role,
+      created_at: m.created_at,
+      accepted: true,
+    }
+  })
+}
+
 export interface CsvValidationResult {
   valid: CsvRow[]
   errors: Array<{ row: number; message: string }>

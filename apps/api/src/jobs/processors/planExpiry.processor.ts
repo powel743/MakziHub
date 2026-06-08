@@ -36,6 +36,7 @@ export async function planExpiryProcessor(job: Job): Promise<void> {
       await sendSms({
         to: user.phone,
         message: smsTemplates.subscriptionRenewalReminder(profile.plan, expiresAt),
+        template: 'subscriptionRenewalReminder',
       })
     }
 
@@ -72,6 +73,7 @@ export async function planExpiryProcessor(job: Job): Promise<void> {
       await sendSms({
         to: user.phone,
         message: smsTemplates.planDowngraded(profile.plan),
+        template: 'planDowngraded',
       })
     }
 

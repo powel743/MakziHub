@@ -5,11 +5,11 @@ import { env } from '../config/env'
 
 async function corsPlugin(fastify: FastifyInstance): Promise<void> {
   await fastify.register(fastifyCors, {
+    // Explicit allow-list — no wildcard in production.
     origin: [
       env.FRONTEND_URL,
-      'https://makazihub.co.ke',
       'https://www.makazihub.co.ke',
-      'https://makzi-hub.vercel.app',
+      'https://makazihub.co.ke',
       'http://localhost:5173',
       'http://localhost:3000',
     ],

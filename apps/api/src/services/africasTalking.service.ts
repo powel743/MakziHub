@@ -1,10 +1,10 @@
 import { Resend } from 'resend'
+import axios from 'axios'
 import { env } from '../config/env'
 import { redis } from '../config/redis'
 import logger from '../utils/logger'
-// import axios from 'axios'  // Re-enable when SMS goes live
 
-// const AT_BASE_URL = 'https://api.africastalking.com/version1'
+const AT_BASE_URL = 'https://api.africastalking.com/version1'
 
 const resend = new Resend(env.RESEND_API_KEY)
 
@@ -12,11 +12,18 @@ export function generateOtp(): string {
   return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
-// ─── SMS (disabled — re-enable when Africa's Talking goes live) ───────────────
-/*
+// ─── SMS (Africa's Talking) ──────────────────────────────────────────────────
 interface SendSmsParams {
   to: string | string[]
   message: string
+  /** Optional template name, used only for log/error context */
+  template?: string
+}
+
+export interface SendSmsResult {
+  success: boolean
+  messageId?: string
+  error?: string
 }
 
 interface AtSmsResponse {
@@ -32,41 +39,47 @@ interface AtSmsResponse {
   }
 }
 
-export async function sendSms({ to, message }: SendSmsParams): Promise<void> {
+/**
+ * Send an SMS via Africa's Talking. Credentials are read from process.env so the
+ * app still boots when they are absent (SMS simply no-ops with success:false).
+ * This NEVER throws — SMS failures must not crash payment/listing flows.
+ */
+export async function sendSms({ to, message, template }: SendSmsParams): Promise<SendSmsResult> {
+  const apiKey = process.env.AT_API_KEY
+  const username = process.env.AT_USERNAME
+  const from = process.env.AT_SENDER_ID || 'MakaziHub'
   const recipients = Array.isArray(to) ? to.join(',') : to
+
+  if (!apiKey || !username) {
+    logger.warn({ to: recipients, template }, 'AT credentials missing — SMS not sent')
+    return { success: false, error: 'AT credentials not configured' }
+  }
+
   try {
     const response = await axios.post<AtSmsResponse>(
       `${AT_BASE_URL}/messaging`,
-      new URLSearchParams({
-        username: env.AT_USERNAME,
-        to: recipients,
-        message,
-        from: env.AT_SENDER_ID,
-      }),
+      new URLSearchParams({ username, to: recipients, message, from }),
       {
         headers: {
-          apiKey: env.AT_API_KEY,
+          apiKey,
           Accept: 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       }
     )
-    const results = response.data.SMSMessageData.Recipients
+    const results = response.data?.SMSMessageData?.Recipients ?? []
     const failed = results.filter((r) => r.statusCode !== 101)
     if (failed.length > 0) {
-      logger.warn({ failed }, 'Some SMS deliveries failed')
-    } else {
-      logger.info({ recipients }, 'SMS delivered')
+      logger.warn({ failed, template, to: recipients }, 'Some SMS deliveries failed')
+      return { success: false, error: 'Some recipients failed', messageId: results[0]?.messageId }
     }
+    logger.info({ recipients, template }, 'SMS delivered')
+    return { success: true, messageId: results[0]?.messageId }
   } catch (err) {
-    logger.error({ err, to, message }, 'Failed to send SMS via Africa\'s Talking')
+    const error = err instanceof Error ? err.message : 'Unknown SMS error'
+    logger.error({ err, to: recipients, template }, "Failed to send SMS via Africa's Talking")
+    return { success: false, error }
   }
-}
-*/
-// ─────────────────────────────────────────────────────────────────────────────
-
-export async function sendSms({ to, message }: { to: string | string[]; message: string }): Promise<void> {
-  logger.info({ to, message }, "SMS sending mocked (Africa's Talking disabled)")
 }
 
 export async function sendOtp({ phone, email }: { phone: string; email: string }): Promise<string> {

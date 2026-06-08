@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import { useSeoMeta } from '../../hooks/useSeoMeta'
+import { buildAgencyMeta } from '../../utils/seo'
 import { useQuery } from '@tanstack/react-query'
 import { Building2, CheckCircle, Calendar } from 'lucide-react'
 import { getAgency } from '../../api/agencies.api'
@@ -20,10 +21,7 @@ export default function AgencyProfilePage() {
 
   return (
     <>
-      <Helmet>
-        <title>{agency.name} — MakaziHub Agency</title>
-        <meta name="description" content={`Browse listings by ${agency.name} on MakaziHub.`} />
-      </Helmet>
+      {useSeoMeta({ ...buildAgencyMeta(agency.name), canonicalPath: `/agencies/${agency.id}` })}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="bg-white rounded-2xl border border-gray-100 p-8 mb-8">

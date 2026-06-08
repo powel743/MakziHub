@@ -28,18 +28,18 @@ export default function MyInquiries() {
         ) : (
           <div className="space-y-4">
             {inquiries.map((inq) => (
-              <div key={inq.listing_id} className="bg-white rounded-2xl border border-gray-100 p-5">
+              <div key={inq.inquiry_id} className="bg-white rounded-2xl border border-gray-100 p-5">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
-                    <Link to={`/listings/${inq.listing_id}`} className="font-semibold text-gray-900 hover:text-primary transition-colors">
-                      {inq.listing_title}
+                    <Link to={`/listings/${inq.listing?.id}`} className="font-semibold text-gray-900 hover:text-primary transition-colors">
+                      {inq.listing?.title}
                     </Link>
                     <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-1">
                       <MapPin className="w-3.5 h-3.5" />
-                      {inq.estate}
+                      {inq.listing?.estate}
                     </div>
                   </div>
-                  <span className="text-xs text-gray-400">Unlocked {formatDate(inq.unlocked_at)}</span>
+                  {inq.unlocked_at && <span className="text-xs text-gray-400">Unlocked {formatDate(inq.unlocked_at)}</span>}
                 </div>
 
                 {inq.contact_details && (
@@ -60,7 +60,7 @@ export default function MyInquiries() {
                         <Phone className="w-3.5 h-3.5" /> Call
                       </a>
                       <a
-                        href={whatsappUrl(inq.contact_details.phone, inq.listing_title)}
+                        href={whatsappUrl(inq.contact_details.phone, inq.listing?.title ?? '')}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1.5 bg-[#25D366] text-white text-xs font-semibold px-3 py-2 rounded-lg"

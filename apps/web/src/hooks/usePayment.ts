@@ -32,7 +32,7 @@ export function usePayment(onSuccess?: () => void): UsePaymentReturn {
     intervalRef.current = setInterval(async () => {
       try {
         const inquiries = await getMyInquiries()
-        const found = inquiries.find((i) => i.listing_id === listingIdRef.current)
+        const found = inquiries.find((i) => i.listing?.id === listingIdRef.current)
         if (found) {
           stopPolling()
           setStatus('complete')

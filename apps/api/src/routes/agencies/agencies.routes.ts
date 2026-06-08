@@ -5,6 +5,7 @@ import {
   createAgencyHandler,
   getAgencyHandler,
   inviteMemberHandler,
+  getMembersHandler,
   importPreviewHandler,
   importConfirmHandler,
 } from './agencies.controller'
@@ -16,6 +17,11 @@ export async function agenciesRoutes(fastify: FastifyInstance): Promise<void> {
     '/',
     { preHandler: [requireAuth, requireRole('agency')], schema: { tags: ['agencies'] } },
     createAgencyHandler
+  )
+  fastify.get(
+    '/:id/members',
+    { preHandler: [requireAuth, requireRole('agency')], schema: { tags: ['agencies'] } },
+    getMembersHandler
   )
   fastify.post(
     '/:id/members',

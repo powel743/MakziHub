@@ -16,8 +16,8 @@ const schema = z.object({
   title: z.string().min(10, 'Title must be at least 10 characters'),
   estate: z.string().min(1, 'Select an estate'),
   house_type: z.string().min(1, 'Select a house type'),
-  rent_ksh: z.coerce.number().min(1000, 'Minimum rent is KES 1,000'),
-  deposit_ksh: z.coerce.number().optional(),
+  rent_ksh: z.coerce.number().int('Rent must be a whole number of KES').min(1000, 'Minimum rent is KES 1,000'),
+  deposit_ksh: z.coerce.number().int('Deposit must be a whole number of KES').optional(),
   bedrooms: z.coerce.number().min(0),
   bathrooms: z.coerce.number().min(1),
   description: z.string().min(30, 'Description must be at least 30 characters'),
@@ -40,10 +40,12 @@ export default function AddEditListing() {
   const [uploading, setUploading] = useState(false)
   const [listingId, setListingId] = useState<string | null>(id || null)
 
-  const { register, control, handleSubmit, reset, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, control, handleSubmit, reset, watch, getValues, trigger, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { amenities: [], furnished: false, bedrooms: 1, bathrooms: 1 },
   })
+
+  const MIN_PHOTOS = 3
 
   useEffect(() => {
     if (isEdit && id) {
@@ -68,17 +70,36 @@ export default function AddEditListing() {
   }, [id, isEdit, reset])
 
   const handleStep1 = () => setStep(1)
-  const handleStep2 = () => setStep(2)
   const handleStep3 = () => setStep(3)
+
+  // Moving from Details → Photos. Photos require a listing id, so for a new
+  // listing we create the record now and reuse it on final publish.
+  const handleStep2 = async () => {
+    if (!isEdit && !listingId) {
+      const valid = await trigger()
+      if (!valid) {
+        toast.error('Please complete all required fields before adding photos')
+        return
+      }
+      try {
+        const created = await createListing(getValues())
+        setListingId((created as any).listing_id ?? (created as any).id ?? null)
+      } catch (err: any) {
+        toast.error(err?.response?.data?.error || 'Could not save listing')
+        return
+      }
+    }
+    setStep(2)
+  }
 
   const onSubmit = async (data: FormData) => {
     try {
-      if (isEdit && listingId) {
+      if (listingId) {
         await updateListing(listingId, data)
-        toast.success('Listing updated!')
+        toast.success(isEdit ? 'Listing updated!' : 'Listing published!')
       } else {
         const created = await createListing(data)
-        setListingId(created.id)
+        setListingId((created as any).listing_id ?? (created as any).id ?? null)
         toast.success('Listing created!')
       }
       navigate('/lister/listings')
@@ -272,6 +293,12 @@ export default function AddEditListing() {
                 </div>
               )}
 
+              {photos.length < MIN_PHOTOS && (
+                <p className="text-xs text-amber-600">
+                  Add at least {MIN_PHOTOS} photos to publish your listing ({photos.length}/{MIN_PHOTOS}).
+                </p>
+              )}
+
               <div className="flex gap-3">
                 <Button onClick={() => setStep(1)} variant="outline" fullWidth>← Back</Button>
                 <Button onClick={handleStep3} fullWidth>Next: Review →</Button>
@@ -299,9 +326,14 @@ export default function AddEditListing() {
                   </div>
                 ))}
               </div>
+              {!isEdit && photos.length < MIN_PHOTOS && (
+                <p className="text-xs text-amber-600 text-center">
+                  Add at least {MIN_PHOTOS} photos (currently {photos.length}) before publishing.
+                </p>
+              )}
               <div className="flex gap-3">
                 <Button onClick={() => setStep(2)} type="button" variant="outline" fullWidth>← Back</Button>
-                <Button type="submit" loading={isSubmitting} fullWidth>
+                <Button type="submit" loading={isSubmitting} fullWidth disabled={!isEdit && photos.length < MIN_PHOTOS}>
                   {isEdit ? 'Save Changes' : 'Publish Listing'}
                 </Button>
               </div>

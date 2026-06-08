@@ -94,18 +94,18 @@ export default function TenantDashboard() {
           ) : (
             <div className="divide-y divide-gray-50">
               {recent.map((inq) => (
-                <div key={inq.listing_id} className="px-6 py-4 flex items-start gap-4">
+                <div key={inq.inquiry_id} className="px-6 py-4 flex items-start gap-4">
                   <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 text-sm truncate">{inq.listing_title}</p>
+                    <p className="font-medium text-gray-900 text-sm truncate">{inq.listing?.title}</p>
                     <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-                      <MapPin className="w-3 h-3" /> {inq.estate}
+                      <MapPin className="w-3 h-3" /> {inq.listing?.estate}
                       {inq.contact_details && <span>· {inq.contact_details.phone}</span>}
                     </div>
                   </div>
-                  <span className="text-xs text-gray-400 flex-shrink-0">{formatRelative(inq.unlocked_at)}</span>
+                  {inq.unlocked_at && <span className="text-xs text-gray-400 flex-shrink-0">{formatRelative(inq.unlocked_at)}</span>}
                 </div>
               ))}
             </div>

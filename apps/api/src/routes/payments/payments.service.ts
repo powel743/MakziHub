@@ -1,11 +1,10 @@
 import { supabaseAdmin } from '../../config/supabase'
 import { mpesaService, extractCallbackMeta, DarajaCallbackBody } from '../../services/mpesa.service'
-import { sendNotificationEmail } from '../../services/africasTalking.service'
-// import { sendSms } from '../../services/africasTalking.service' // Re-enable with AT
-// import { smsTemplates } from '../../services/sms-templates' // Re-enable with AT
-import { paymentQueue } from '../../jobs/queue'
-import { notFound, unprocessable } from '../../utils/errors'
-import { CREDIT_BUNDLES, SUBSCRIPTION_PLANS, BOOST_PRICES } from './payments.schema'
+import { sendNotificationEmail, sendSms } from '../../services/africasTalking.service'
+import { smsTemplates } from '../../services/sms-templates'
+import { paymentTimeoutQueue } from '../../jobs/queue'
+import { notFound, unprocessable, forbidden } from '../../utils/errors'
+import { CREDIT_BUNDLES, SUBSCRIPTION_PLANS, BOOST_PLANS } from './payments.schema'
 import logger from '../../utils/logger'
 
 export async function handleMpesaCallback(body: DarajaCallbackBody) {
@@ -40,7 +39,9 @@ export async function handleMpesaCallback(body: DarajaCallbackBody) {
       .update({ status: 'failed' })
       .eq('id', payment.id)
 
-    // SMS disabled — notify via email instead
+    if (user?.phone) {
+      await sendSms({ to: user.phone, message: smsTemplates.paymentFailed(), template: 'paymentFailed' })
+    }
     if (user?.email) {
       await sendNotificationEmail({
         to: user.email,
@@ -77,9 +78,16 @@ export async function handleMpesaCallback(body: DarajaCallbackBody) {
       if (listing) {
         const { data: listerUser } = await supabaseAdmin
           .from('users')
-          .select('email')
+          .select('email, phone')
           .eq('id', listing.lister_user_id)
           .single()
+        if (listerUser?.phone) {
+          await sendSms({
+            to: listerUser.phone,
+            message: smsTemplates.contactUnlocked(listing.estate),
+            template: 'contactUnlocked',
+          })
+        }
         if (listerUser?.email) {
           await sendNotificationEmail({
             to: listerUser.email,
@@ -207,7 +215,7 @@ export async function buyCredits(bundle: string, userId: string) {
     .select('id')
     .single()
 
-  await paymentQueue.add(
+  await paymentTimeoutQueue.add(
     'payment-timeout',
     { paymentId: payment!.id, userId },
     { delay: 2 * 60 * 1000 }
@@ -251,7 +259,7 @@ export async function buySubscription(plan: string, userId: string) {
     .select('id')
     .single()
 
-  await paymentQueue.add(
+  await paymentTimeoutQueue.add(
     'payment-timeout',
     { paymentId: payment!.id, userId },
     { delay: 2 * 60 * 1000 }
@@ -261,5 +269,67 @@ export async function buySubscription(plan: string, userId: string) {
     status: 'pending',
     checkout_request_id: stkResult.checkoutRequestId,
     message: 'Enter your M-Pesa PIN to activate your subscription.',
+  }
+}
+
+export async function initiateBoost(
+  listingId: string,
+  plan: string,
+  userId: string,
+  userRole: string
+) {
+  const boost = BOOST_PLANS[plan]
+  if (!boost) throw unprocessable('Invalid boost plan')
+
+  // Verify the caller owns the listing
+  const { data: listing } = await supabaseAdmin
+    .from('listings')
+    .select('id, lister_user_id')
+    .eq('id', listingId)
+    .single()
+  if (!listing) throw notFound('Listing not found')
+  if (listing.lister_user_id !== userId && userRole !== 'admin') {
+    throw forbidden('You do not own this listing')
+  }
+
+  const { data: user } = await supabaseAdmin
+    .from('users')
+    .select('phone')
+    .eq('id', userId)
+    .single()
+  if (!user?.phone) throw notFound('User phone not found')
+
+  const stkResult = await mpesaService.initiateStkPush({
+    phone: user.phone,
+    amount: boost.price,
+    accountRef: 'MHBoost',
+    description: `Boost ${boost.days}d`,
+  })
+
+  // metadata.days is consumed by the M-Pesa callback, which sets
+  // listings.featured_until = now + days and inserts the boosts row.
+  const { data: payment } = await supabaseAdmin
+    .from('payments')
+    .insert({
+      user_id: userId,
+      type: 'boost',
+      amount_ksh: boost.price,
+      mpesa_checkout_id: stkResult.checkoutRequestId,
+      status: 'pending',
+      metadata: { listing_id: listingId, days: boost.days },
+    })
+    .select('id')
+    .single()
+
+  await paymentTimeoutQueue.add(
+    'payment-timeout',
+    { paymentId: payment!.id, userId },
+    { delay: 2 * 60 * 1000 }
+  )
+
+  return {
+    status: 'pending',
+    checkout_request_id: stkResult.checkoutRequestId,
+    message: 'Enter your M-Pesa PIN to boost this listing.',
   }
 }

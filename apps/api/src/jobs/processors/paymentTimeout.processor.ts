@@ -50,6 +50,7 @@ export async function paymentTimeoutProcessor(
     await sendSms({
       to: user.phone,
       message: smsTemplates.paymentTimedOut(),
+      template: 'paymentTimedOut',
     })
   }
 

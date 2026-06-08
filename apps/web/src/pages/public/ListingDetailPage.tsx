@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
-import { MapPin, Bed, Bath, CalendarDays, Eye, Heart, Flag, Star, ChevronLeft } from 'lucide-react'
+import { MapPin, Bed, Bath, CalendarDays, Eye, Heart, Flag, Star, ChevronLeft, CheckCircle } from 'lucide-react'
 import { useListing } from '../../hooks/useListing'
 import { useAuth } from '../../hooks/useAuth'
 import { PhotoGallery } from '../../components/listings/PhotoGallery'
@@ -13,6 +12,10 @@ import { PageSpinner } from '../../components/ui/Spinner'
 import { Button } from '../../components/ui/Button'
 import { Modal } from '../../components/ui/Modal'
 import { buildListingMeta } from '../../utils/seo'
+import { useSeoMeta } from '../../hooks/useSeoMeta'
+import { ListingJsonLd } from '../../components/seo/ListingJsonLd'
+import { BreadcrumbJsonLd } from '../../components/seo/BreadcrumbJsonLd'
+import { MoreInEstate } from '../../components/listings/MoreInEstate'
 import { formatKES, formatDate, formatHouseType, formatRelative } from '../../utils/format'
 import { reportListing, getListingReviews, submitReview } from '../../api/listings.api'
 import toast from 'react-hot-toast'
@@ -70,11 +73,21 @@ export default function ListingDetailPage() {
 
   return (
     <>
-      <Helmet>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
-        {meta.ogImage && <meta property="og:image" content={meta.ogImage} />}
-      </Helmet>
+      {useSeoMeta({
+        title: meta.title,
+        description: meta.description,
+        canonicalPath: `/listings/${listing.id}`,
+        image: meta.ogImage,
+      })}
+      <ListingJsonLd listing={listing} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Listings', path: '/listings' },
+          { name: listing.estate, path: `/estates/${listing.estate}` },
+          { name: listing.title, path: `/listings/${listing.id}` },
+        ]}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
@@ -91,7 +104,7 @@ export default function ListingDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left col */}
           <div className="lg:col-span-2 space-y-8">
-            <PhotoGallery photos={listing.photos} title={listing.title} />
+            <PhotoGallery photos={listing.photos} title={listing.title} estate={listing.estate} />
 
             {/* Title & key info */}
             <div>
@@ -157,6 +170,7 @@ export default function ListingDetailPage() {
             </div>
 
             {/* Lister info */}
+            {listing.lister && (
             <div className="bg-gray-50 rounded-2xl p-5">
               <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Listed by</h2>
               <div className="flex items-center gap-3">
@@ -168,8 +182,13 @@ export default function ListingDetailPage() {
                   </div>
                 )}
                 <div>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-gray-900 flex items-center gap-1.5">
                     {listing.lister.agency ? listing.lister.agency.name : listing.lister.name}
+                    {listing.lister.id_verified && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">
+                        <CheckCircle className="w-3 h-3" /> Verified
+                      </span>
+                    )}
                   </p>
                   {listing.lister.agency && (
                     <Link to={`/agencies/${listing.lister.agency.id}`} className="text-sm text-primary hover:underline">
@@ -179,6 +198,7 @@ export default function ListingDetailPage() {
                 </div>
               </div>
             </div>
+            )}
 
             {/* Reviews */}
             <div>
@@ -256,6 +276,9 @@ export default function ListingDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Internal linking — more listings in the same estate */}
+        <MoreInEstate estate={listing.estate} excludeId={listing.id} />
       </div>
 
       {/* Report modal */}

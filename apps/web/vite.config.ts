@@ -17,4 +17,17 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          maps: ['leaflet', 'react-leaflet'],
+          charts: ['recharts'],
+          ui: ['lucide-react'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 800,
+  },
 })

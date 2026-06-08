@@ -14,3 +14,8 @@ export const getPaymentStatus = async (checkoutRequestId: string) => {
   const res = await client.get(`/payments/status/${checkoutRequestId}`)
   return res.data
 }
+
+export const boostListing = async (listingId: string, plan: '7day' | '14day' | '30day') => {
+  const res = await client.post(`/listings/${listingId}/boost`, { plan })
+  return res.data
+}

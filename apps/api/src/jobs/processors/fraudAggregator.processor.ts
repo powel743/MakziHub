@@ -90,6 +90,7 @@ export async function fraudAggregatorProcessor(job: Job<{ listingId: string }>):
         await sendSms({
           to: user.phone,
           message: smsTemplates.fraudAutoRefund(listing?.estate ?? 'the property', newCredits),
+          template: 'fraudAutoRefund',
         })
       }
     }

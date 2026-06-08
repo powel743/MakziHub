@@ -131,6 +131,7 @@ export async function csvImportProcessor(job: Job<CsvImportData>): Promise<void>
     await sendSms({
       to: user.phone,
       message: smsTemplates.csvImportComplete(importedCount, errors.length),
+      template: 'csvImportComplete',
     })
   }
 

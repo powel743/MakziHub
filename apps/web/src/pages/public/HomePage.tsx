@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { useSeoMeta } from '../../hooks/useSeoMeta'
 import { Search, Shield, Zap, Building2, Star, ArrowRight, CheckCircle } from 'lucide-react'
 import { useListings } from '../../hooks/useListings'
 import { ListingCard } from '../../components/listings/ListingCard'
+import { LocalBusinessJsonLd } from '../../components/seo/LocalBusinessJsonLd'
 import { APPROVED_ESTATES, PLANS } from '../../utils/constants'
+import { buildHomeMeta } from '../../utils/seo'
 import { formatKES } from '../../utils/format'
 
 const TOP_ESTATES = [
@@ -29,10 +32,15 @@ export default function HomePage() {
 
   return (
     <>
+      {useSeoMeta({ ...buildHomeMeta(), canonicalPath: '/' })}
       <Helmet>
-        <title>MakaziHub — Find Verified Rental Houses in Nairobi</title>
-        <meta name="description" content="Browse thousands of verified rental listings across Nairobi. Find bedsitters, apartments and houses with direct landlord contacts. No agent fees." />
+        {/* Kenya local-SEO signals (Nairobi County) */}
+        <meta name="geo.region" content="KE-30" />
+        <meta name="geo.placename" content="Nairobi, Kenya" />
+        <meta name="geo.position" content="-1.286389;36.817223" />
+        <meta name="ICBM" content="-1.286389, 36.817223" />
       </Helmet>
+      <LocalBusinessJsonLd />
 
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white overflow-hidden">

@@ -1,6 +1,7 @@
 import { Job } from 'bullmq'
 import { supabaseAdmin } from '../../config/supabase'
-import { sendNotificationEmail } from '../../services/africasTalking.service'
+import { sendNotificationEmail, sendSms } from '../../services/africasTalking.service'
+import { smsTemplates } from '../../services/sms-templates'
 import logger from '../../utils/logger'
 
 export async function listingExpiryProcessor(job: Job): Promise<void> {
@@ -29,7 +30,7 @@ export async function listingExpiryProcessor(job: Job): Promise<void> {
 
   const { data: toWarn, error: warnError } = await supabaseAdmin
     .from('listings')
-    .select('id, estate, lister_user_id, users!lister_user_id(email)')
+    .select('id, estate, lister_user_id, users!lister_user_id(email, phone)')
     .eq('status', 'available')
     .lt('updated_at', thirtyEightDaysAgo.toISOString())
     .gte('updated_at', fortyFiveDaysAgo.toISOString())
@@ -41,11 +42,18 @@ export async function listingExpiryProcessor(job: Job): Promise<void> {
 
   if (toWarn && toWarn.length > 0) {
     for (const listing of toWarn) {
-      const userRaw = listing.users
-      const email = Array.isArray(userRaw) ? userRaw[0]?.email : (userRaw as { email: string } | null)?.email
-      if (email) {
+      const userRaw = listing.users as { email: string; phone: string } | { email: string; phone: string }[] | null
+      const contact = Array.isArray(userRaw) ? userRaw[0] : userRaw
+      if (contact?.phone) {
+        await sendSms({
+          to: contact.phone,
+          message: smsTemplates.listingExpiryWarning(listing.estate),
+          template: 'listingExpiryWarning',
+        })
+      }
+      if (contact?.email) {
         await sendNotificationEmail({
-          to: email,
+          to: contact.email,
           subject: 'Your listing expires in 7 days',
           html: `<p>Your listing at <strong>${listing.estate}</strong> expires in 7 days. <a href="https://makazihub.co.ke/lister/listings">Log in to confirm it's still available</a>.</p>`,
         })

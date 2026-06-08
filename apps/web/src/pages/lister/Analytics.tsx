@@ -11,7 +11,7 @@ export default function Analytics() {
   const { user } = useAuth()
   const plan = user?.lister_profile?.plan || 'free'
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['lister-analytics'],
     queryFn: async () => {
       const res = await client.get('/lister/analytics')
@@ -37,9 +37,29 @@ export default function Analytics() {
 
   if (isLoading) return <PageSpinner />
 
-  const views = data?.views_daily || Array.from({ length: 30 }, (_, i) => ({ day: `Day ${i + 1}`, count: Math.floor(Math.random() * 50) }))
-  const unlocks = data?.unlocks_daily || Array.from({ length: 30 }, (_, i) => ({ day: `Day ${i + 1}`, count: Math.floor(Math.random() * 10) }))
-  const topListings = data?.top_listings || []
+  if (isError) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">Couldn't load analytics</h2>
+        <p className="text-gray-500">Please refresh the page or try again later.</p>
+      </div>
+    )
+  }
+
+  const topListings: Array<{ id: string; title: string; views: number; unlocks: number }> = data?.top_listings || []
+  // Real per-listing views (we don't track per-day views yet)
+  const viewsByListing = topListings.map((l) => ({ name: l.title.length > 14 ? `${l.title.slice(0, 14)}…` : l.title, count: l.views }))
+  const unlocks: Array<{ day: string; count: number }> = data?.unlocks_daily || []
+
+  const cards = [
+    { label: 'Total Views', value: (data?.total_views ?? 0).toLocaleString() },
+    { label: 'Total Unlocks', value: (data?.total_unlocks ?? 0).toLocaleString() },
+    { label: 'Revenue Generated', value: `KES ${(data?.total_revenue ?? 0).toLocaleString()}` },
+    {
+      label: 'Conversion',
+      value: data?.total_views ? `${Math.round(((data?.total_unlocks ?? 0) / data.total_views) * 100)}%` : '0%',
+    },
+  ]
 
   return (
     <>
@@ -47,22 +67,35 @@ export default function Analytics() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-2xl font-bold font-display text-gray-900 mb-6">Analytics (Last 30 Days)</h1>
 
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {cards.map((c) => (
+            <div key={c.label} className="bg-white rounded-2xl border border-gray-100 p-5">
+              <p className="text-2xl font-bold text-gray-900">{c.value}</p>
+              <p className="text-sm text-gray-500 mt-0.5">{c.label}</p>
+            </div>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-2xl border border-gray-100 p-5">
-            <h2 className="font-semibold text-gray-900 mb-5">Listing Views</h2>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={views.slice(-14)}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="day" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip />
-                <Bar dataKey="count" fill="#16a34a" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <h2 className="font-semibold text-gray-900 mb-5">Views by Listing</h2>
+            {viewsByListing.length === 0 ? (
+              <p className="text-sm text-gray-400 py-12 text-center">No listing views yet.</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={viewsByListing}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#16a34a" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
 
           <div className="bg-white rounded-2xl border border-gray-100 p-5">
-            <h2 className="font-semibold text-gray-900 mb-5">Contact Unlocks</h2>
+            <h2 className="font-semibold text-gray-900 mb-5">Contact Unlocks (Daily)</h2>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={unlocks.slice(-14)}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

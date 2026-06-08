@@ -1,6 +1,19 @@
 import { supabaseAdmin } from '../../config/supabase'
-import { alertQueue, listingQueue } from '../../jobs/queue'
-import { notFound, forbidden, unprocessable } from '../../utils/errors'
+import { alertQueue, fraudRefundQueue } from '../../jobs/queue'
+import { notFound, forbidden, unprocessable, badRequest } from '../../utils/errors'
+import { maskName } from '../../utils/mask'
+import { sendSms } from '../../services/africasTalking.service'
+import { smsTemplates } from '../../services/sms-templates'
+
+const MIN_PHOTOS = 3
+
+async function countPhotos(listingId: string): Promise<number> {
+  const { count } = await supabaseAdmin
+    .from('listing_photos')
+    .select('*', { count: 'exact', head: true })
+    .eq('listing_id', listingId)
+  return count ?? 0
+}
 import type { CreateListingInput, UpdateListingInput, ListingsQuery } from './listings.schema'
 
 const LISTER_ROLES = ['landlord', 'caretaker', 'agency']
@@ -11,6 +24,7 @@ export async function getListings(query: ListingsQuery) {
     .select(
       `id, title, estate, rent_ksh, bedrooms, house_type, available_from,
        verified_tier, saved_count, view_count, status, featured_until, created_at,
+       lister_user_id,
        listing_photos(url, "order")`,
       { count: 'exact' }
     )
@@ -44,6 +58,18 @@ export async function getListings(query: ListingsQuery) {
   const { data, error, count } = await dbQuery
   if (error) throw unprocessable(error.message)
 
+  // Batch-fetch lister verification status (listings has no direct FK to
+  // lister_profiles, so we resolve id_verified in one extra query).
+  const listerIds = [...new Set((data ?? []).map((l) => l.lister_user_id).filter(Boolean))]
+  const verifiedByUser = new Map<string, boolean>()
+  if (listerIds.length > 0) {
+    const { data: profiles } = await supabaseAdmin
+      .from('lister_profiles')
+      .select('user_id, id_verified')
+      .in('user_id', listerIds)
+    for (const p of profiles ?? []) verifiedByUser.set(p.user_id, p.id_verified)
+  }
+
   const listings = (data ?? []).map((l) => ({
     ...l,
     cover_photo_url:
@@ -51,6 +77,7 @@ export async function getListings(query: ListingsQuery) {
         ?.sort((a, b) => a.order - b.order)[0]?.url ?? null,
     listing_photos: undefined,
     is_featured: l.featured_until ? new Date(l.featured_until) > new Date() : false,
+    lister_id_verified: verifiedByUser.get(l.lister_user_id) ?? false,
     // Never expose address or phone in list view
   }))
 
@@ -102,11 +129,22 @@ export async function getListingById(listingId: string, userId?: string) {
     .order('created_at', { ascending: false })
     .limit(20)
 
+  // Resolve reviewer names so they can be masked as "J*** M***"
+  const reviewTenantIds = [...new Set((reviews ?? []).map((r) => r.tenant_user_id))]
+  const reviewerNames = new Map<string, string>()
+  if (reviewTenantIds.length > 0) {
+    const { data: profiles } = await supabaseAdmin
+      .from('tenant_profiles')
+      .select('user_id, full_name')
+      .in('user_id', reviewTenantIds)
+    for (const p of profiles ?? []) reviewerNames.set(p.user_id, p.full_name)
+  }
+
   const maskedReviews = (reviews ?? []).map((r) => ({
     rating: r.rating,
     body: r.body,
     created_at: r.created_at,
-    tenant_name_masked: maskName(r.tenant_user_id),
+    tenant_name_masked: maskName(reviewerNames.get(r.tenant_user_id)),
   }))
 
   const avgRating =
@@ -172,6 +210,7 @@ export async function getListingById(listingId: string, userId?: string) {
       ? {
           name: listerProfile.full_name,
           verified_tier: listerProfile.id_verified ? 'id' : 'phone',
+          id_verified: listerProfile.id_verified ?? false,
           member_since: listerProfile.created_at,
         }
       : null,
@@ -251,6 +290,20 @@ export async function createListing(input: CreateListingInput, userId: string, u
     houseType: input.house_type,
   })
 
+  // Notify the lister their listing is live (SMS — non-blocking)
+  const { data: listerUser } = await supabaseAdmin
+    .from('users')
+    .select('phone')
+    .eq('id', userId)
+    .single()
+  if (listerUser?.phone) {
+    await sendSms({
+      to: listerUser.phone,
+      message: smsTemplates.listingPublished(input.estate, listing.id),
+      template: 'listingPublished',
+    })
+  }
+
   return { listing_id: listing.id, status: 'available', verified_tier: verifiedTier }
 }
 
@@ -274,6 +327,16 @@ export async function updateListing(
 
   const { amenities, ...updateData } = input
 
+  // PRD §8.5: a listing must have at least 3 photos to be (re)published.
+  // Photos are uploaded after creation, so this is enforced when a listing is
+  // set to 'available' rather than at create time.
+  if (input.status === 'available') {
+    const photoCount = await countPhotos(listingId)
+    if (photoCount < MIN_PHOTOS) {
+      throw badRequest(`A listing needs at least ${MIN_PHOTOS} photos before it can be published.`)
+    }
+  }
+
   const { data: updated, error } = await supabaseAdmin
     .from('listings')
     .update(updateData)
@@ -283,13 +346,17 @@ export async function updateListing(
 
   if (error) throw unprocessable(error.message)
 
-  // If marked as taken, queue refund check for recent unlocks
+  // If marked as taken, queue a 24h-delayed refund check for recent unlocks
   if (input.status === 'taken' && existing.status !== 'taken') {
-    await listingQueue.add('fraud-refund-check', {
-      listingId,
-      estate: existing.estate,
-      markedTakenAt: new Date().toISOString(),
-    })
+    await fraudRefundQueue.add(
+      'fraud-refund-check',
+      {
+        listingId,
+        estate: existing.estate,
+        markedTakenAt: new Date().toISOString(),
+      },
+      { delay: 24 * 60 * 60 * 1000 }
+    )
   }
 
   return updated
@@ -333,9 +400,4 @@ export async function toggleSave(listingId: string, userId: string) {
     await supabaseAdmin.rpc('increment_saved_count', { listing_id: listingId })
     return { saved: true }
   }
-}
-
-function maskName(userId: string): string {
-  // Simple mask — in production you'd look up the actual name
-  return `T***${userId.slice(-4)}`
 }

@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
-import { Home, Users, Flag, BarChart2, CheckSquare, AlertTriangle } from 'lucide-react'
+import { Home, Users, Flag, BarChart2, CheckSquare, AlertTriangle, ShieldCheck } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getAdminStats } from '../../api/admin.api'
 import { PageSpinner } from '../../components/ui/Spinner'
@@ -25,6 +25,7 @@ export default function AdminDashboard() {
     { to: '/admin/listings', icon: <CheckSquare className="w-5 h-5" />, label: 'Listing Moderation', desc: 'Review and approve pending listings' },
     { to: '/admin/users', icon: <Users className="w-5 h-5" />, label: 'User Management', desc: 'Search, verify, or suspend users' },
     { to: '/admin/fraud', icon: <AlertTriangle className="w-5 h-5" />, label: 'Fraud Reports', desc: 'Review flagged listings' },
+    { to: '/admin/verifications', icon: <ShieldCheck className="w-5 h-5" />, label: 'ID Verifications', desc: 'Review lister ID submissions' },
     { to: '/admin/revenue', icon: <BarChart2 className="w-5 h-5" />, label: 'Revenue Reports', desc: 'Monthly revenue breakdown' },
   ]
 

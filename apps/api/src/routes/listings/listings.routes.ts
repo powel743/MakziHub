@@ -12,6 +12,7 @@ import {
   deletePhotoHandler,
   toggleSaveHandler,
   reportListingHandler,
+  boostListingHandler,
 } from './listings.controller'
 
 export async function listingsRoutes(fastify: FastifyInstance): Promise<void> {
@@ -75,4 +76,10 @@ export async function listingsRoutes(fastify: FastifyInstance): Promise<void> {
     preHandler: [requireAuth, requireRole('landlord', 'caretaker', 'agency', 'admin')],
     schema: { tags: ['listings'] },
   }, deletePhotoHandler)
+
+  // Featured boost — initiates an M-Pesa STK push; the callback sets featured_until
+  fastify.post('/:id/boost', {
+    preHandler: [requireAuth, requireRole('landlord', 'caretaker', 'agency')],
+    schema: { tags: ['listings'] },
+  }, boostListingHandler)
 }

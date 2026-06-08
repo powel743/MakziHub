@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '../../config/supabase'
 import { conflict, forbidden, notFound, unprocessable } from '../../utils/errors'
+import { maskName } from '../../utils/mask'
 import type { CreateReviewInput } from './reviews.schema'
 
 export async function createReview(input: CreateReviewInput, tenantUserId: string) {
@@ -62,13 +63,24 @@ export async function getListingReviews(listingId: string) {
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : null
 
+  // Resolve reviewer names so they can be masked as "J*** M***"
+  const tenantIds = [...new Set((reviews ?? []).map((r) => r.tenant_user_id))]
+  const nameByUser = new Map<string, string>()
+  if (tenantIds.length > 0) {
+    const { data: profiles } = await supabaseAdmin
+      .from('tenant_profiles')
+      .select('user_id, full_name')
+      .in('user_id', tenantIds)
+    for (const p of profiles ?? []) nameByUser.set(p.user_id, p.full_name)
+  }
+
   return {
     reviews: (reviews ?? []).map((r) => ({
       id: r.id,
       rating: r.rating,
       body: r.body,
       created_at: r.created_at,
-      reviewer: `T***${r.tenant_user_id.slice(-4)}`,
+      reviewer: maskName(nameByUser.get(r.tenant_user_id)),
     })),
     average_rating: avgRating ? Math.round(avgRating * 10) / 10 : null,
     count: reviews?.length ?? 0,

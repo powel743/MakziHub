@@ -1,9 +1,8 @@
 import { supabaseAdmin } from '../../config/supabase'
 import { mpesaService } from '../../services/mpesa.service'
-import { sendNotificationEmail } from '../../services/africasTalking.service'
-//import { sendSms } from '../../services/africasTalking.service'
-//import { smsTemplates } from '../../services/sms-templates'
-import { paymentQueue } from '../../jobs/queue'
+import { sendNotificationEmail, sendSms } from '../../services/africasTalking.service'
+import { smsTemplates } from '../../services/sms-templates'
+import { paymentTimeoutQueue } from '../../jobs/queue'
 import { notFound, unprocessable, conflict } from '../../utils/errors'
 
 const UNLOCK_PRICE_KSH = 100
@@ -121,7 +120,7 @@ export async function unlockListing(listingId: string, tenantUserId: string) {
   })
 
   // Queue payment timeout job (2-minute delay)
-  await paymentQueue.add(
+  await paymentTimeoutQueue.add(
     'payment-timeout',
     { paymentId: payment.id, userId: tenantUserId },
     { delay: 2 * 60 * 1000 }
@@ -141,6 +140,7 @@ export async function getTenantInquiries(tenantUserId: string) {
     .select(`
       id, listing_id, unlocked_at, created_at,
       listings!listing_id(id, title, estate, rent_ksh, house_type, address,
+        users!lister_user_id(phone),
         listing_photos(url, "order"))
     `)
     .eq('tenant_user_id', tenantUserId)
@@ -153,8 +153,13 @@ export async function getTenantInquiries(tenantUserId: string) {
     const listing = inq.listings as unknown as {
       id: string; title: string; estate: string; rent_ksh: number;
       house_type: string; address: string;
+      users: { phone: string } | { phone: string }[] | null;
       listing_photos: Array<{ url: string; order: number }>
     } | null
+    const listerUser = listing
+      ? (Array.isArray(listing.users) ? listing.users[0] : listing.users)
+      : null
+    const phone = listerUser?.phone ?? ''
     return {
       inquiry_id: inq.id,
       unlocked_at: inq.unlocked_at,
@@ -168,8 +173,14 @@ export async function getTenantInquiries(tenantUserId: string) {
             cover_photo: (listing.listing_photos ?? []).sort((a, b) => a.order - b.order)[0]?.url ?? null,
           }
         : null,
-      // Contact details are always included since tenant paid
-      contact_details: listing ? { address: listing.address } : null,
+      // Contact details are always included since the tenant has unlocked
+      contact_details: listing
+        ? {
+            address: listing.address,
+            phone,
+            whatsapp_url: phone ? `https://wa.me/${phone.replace(/[^0-9]/g, '')}` : '',
+          }
+        : null,
     }
   })
 }
@@ -223,10 +234,17 @@ async function getContactDetails(listingId: string) {
 async function notifyLister(listerUserId: string, estate: string) {
   const { data: user } = await supabaseAdmin
     .from('users')
-    .select('email')
+    .select('email, phone')
     .eq('id', listerUserId)
     .single()
 
+  if (user?.phone) {
+    await sendSms({
+      to: user.phone,
+      message: smsTemplates.contactUnlocked(estate),
+      template: 'contactUnlocked',
+    })
+  }
   if (user?.email) {
     await sendNotificationEmail({
       to: user.email,

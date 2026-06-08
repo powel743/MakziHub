@@ -27,6 +27,12 @@ export function maskPhone(phone: string): string {
   return `${clean.slice(0, 4)} ***${visible}`
 }
 
+export function maskEmail(email: string): string {
+  if (!email || !email.includes('@')) return email
+  const [local, domain] = email.split('@')
+  return `${local.slice(0, 1)}***@${domain}`
+}
+
 export function whatsappUrl(phone: string, listing_title: string): string {
   const clean = phone.replace(/\D/g, '')
   const kenyan = clean.startsWith('0') ? `254${clean.slice(1)}` : clean

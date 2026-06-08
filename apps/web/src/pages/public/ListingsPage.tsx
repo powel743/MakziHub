@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import { useSeoMeta } from '../../hooks/useSeoMeta'
 import { Map, Grid3X3 } from 'lucide-react'
 import { useListings } from '../../hooks/useListings'
 import { useListingsStore } from '../../store/listings.store'
@@ -46,14 +46,11 @@ export default function ListingsPage() {
   }
 
   const { listings, pagination, isLoading, isFetching } = useListings(filters)
-  const meta = buildListingsPageMeta(filters.estate)
+  const meta = buildListingsPageMeta(filters.estate, pagination?.total)
 
   return (
     <>
-      <Helmet>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
-      </Helmet>
+      {useSeoMeta({ title: meta.title, description: meta.description, canonicalPath: '/listings' })}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header bar */}

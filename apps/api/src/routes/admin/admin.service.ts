@@ -1,5 +1,73 @@
 import { supabaseAdmin } from '../../config/supabase'
 import { notFound, unprocessable } from '../../utils/errors'
+import { sendSms } from '../../services/africasTalking.service'
+import { smsTemplates } from '../../services/sms-templates'
+
+export async function getAdminStats() {
+  const todayStart = new Date()
+  todayStart.setHours(0, 0, 0, 0)
+
+  const monthStart = new Date()
+  monthStart.setDate(1)
+  monthStart.setHours(0, 0, 0, 0)
+
+  const countOf = async (
+    table: string,
+    apply: (q: any) => any = (q) => q
+  ): Promise<number> => {
+    const { count } = await apply(
+      supabaseAdmin.from(table).select('*', { count: 'exact', head: true })
+    )
+    return count ?? 0
+  }
+
+  const [
+    total_listings,
+    active_listings,
+    new_listings_today,
+    total_users,
+    open_fraud_reports,
+    pending_verifications,
+  ] = await Promise.all([
+    countOf('listings'),
+    countOf('listings', (q) => q.eq('status', 'available')),
+    countOf('listings', (q) => q.gte('created_at', todayStart.toISOString())),
+    countOf('users'),
+    countOf('fraud_reports', (q) => q.eq('resolved', false)),
+    countOf('lister_profiles', (q) => q.eq('id_verified', false).not('id_doc_url', 'is', null)),
+  ])
+
+  // Listings awaiting moderation = those with at least one unresolved fraud report
+  const { data: reportedRows } = await supabaseAdmin
+    .from('fraud_reports')
+    .select('listing_id')
+    .eq('resolved', false)
+  const pending_moderation = new Set((reportedRows ?? []).map((r) => r.listing_id)).size
+
+  // Revenue (completed payments): all-time and month-to-date
+  const sumPayments = async (since?: string): Promise<number> => {
+    let q = supabaseAdmin.from('payments').select('amount_ksh').eq('status', 'complete')
+    if (since) q = q.gte('created_at', since)
+    const { data } = await q
+    return (data ?? []).reduce((sum, p) => sum + (p.amount_ksh ?? 0), 0)
+  }
+  const [total_revenue, revenue_mtd] = await Promise.all([
+    sumPayments(),
+    sumPayments(monthStart.toISOString()),
+  ])
+
+  return {
+    total_listings,
+    active_listings,
+    new_listings_today,
+    total_users,
+    open_fraud_reports,
+    pending_moderation,
+    pending_verifications,
+    total_revenue,
+    revenue_mtd,
+  }
+}
 
 export async function getModerationQueue(status?: string, page = 1, limit = 20) {
   const from = (page - 1) * limit
@@ -158,6 +226,156 @@ export async function resolveFraudReport(
   }
 
   return { report_id: reportId, action, resolved: true }
+}
+
+export async function getVerifications(status: string, page = 1, limit = 20) {
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+
+  const { data, error, count } = await supabaseAdmin
+    .from('verifications')
+    .select(
+      'id, user_id, id_type, front_url, back_url, status, rejection_reason, submitted_at, reviewed_at, users!user_id(email, phone)',
+      { count: 'exact' }
+    )
+    .eq('status', status)
+    .order('submitted_at', { ascending: false })
+    .range(from, to)
+
+  if (error) throw unprocessable(error.message)
+
+  // Resolve lister display names (agency_members aren't an FK to lister_profiles)
+  const userIds = [...new Set((data ?? []).map((v) => v.user_id))]
+  const nameByUser = new Map<string, string>()
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabaseAdmin
+      .from('lister_profiles')
+      .select('user_id, full_name')
+      .in('user_id', userIds)
+    for (const p of profiles ?? []) nameByUser.set(p.user_id, p.full_name)
+  }
+
+  const verifications = (data ?? []).map((v) => {
+    const u = (Array.isArray(v.users) ? v.users[0] : v.users) as { email: string; phone: string } | null
+    return {
+      id: v.id,
+      user_id: v.user_id,
+      name: nameByUser.get(v.user_id) ?? null,
+      email: u?.email ?? null,
+      phone: u?.phone ?? null,
+      id_type: v.id_type,
+      front_url: v.front_url,
+      back_url: v.back_url,
+      status: v.status,
+      rejection_reason: v.rejection_reason,
+      submitted_at: v.submitted_at,
+      reviewed_at: v.reviewed_at,
+    }
+  })
+
+  return { verifications, total: count ?? 0, page, pages: Math.ceil((count ?? 0) / limit) }
+}
+
+export async function approveVerification(verificationId: string, adminId: string) {
+  const { data: v } = await supabaseAdmin
+    .from('verifications')
+    .select('id, user_id')
+    .eq('id', verificationId)
+    .single()
+  if (!v) throw notFound('Verification not found')
+
+  await supabaseAdmin
+    .from('verifications')
+    .update({ status: 'approved', reviewed_at: new Date().toISOString(), reviewer_id: adminId })
+    .eq('id', verificationId)
+
+  await supabaseAdmin
+    .from('lister_profiles')
+    .update({ id_verified: true, verification_status: 'verified' })
+    .eq('user_id', v.user_id)
+
+  const { data: user } = await supabaseAdmin.from('users').select('phone').eq('id', v.user_id).single()
+  if (user?.phone) {
+    await sendSms({
+      to: user.phone,
+      message: smsTemplates.idVerificationApproved(),
+      template: 'idVerificationApproved',
+    })
+  }
+
+  return { message: 'Approved' }
+}
+
+export async function rejectVerification(verificationId: string, reason: string, adminId: string) {
+  if (!reason || !reason.trim()) throw unprocessable('A rejection reason is required')
+
+  const { data: v } = await supabaseAdmin
+    .from('verifications')
+    .select('id, user_id')
+    .eq('id', verificationId)
+    .single()
+  if (!v) throw notFound('Verification not found')
+
+  await supabaseAdmin
+    .from('verifications')
+    .update({
+      status: 'rejected',
+      rejection_reason: reason,
+      reviewed_at: new Date().toISOString(),
+      reviewer_id: adminId,
+    })
+    .eq('id', verificationId)
+
+  await supabaseAdmin
+    .from('lister_profiles')
+    .update({ verification_status: 'rejected' })
+    .eq('user_id', v.user_id)
+
+  const { data: user } = await supabaseAdmin.from('users').select('phone').eq('id', v.user_id).single()
+  if (user?.phone) {
+    await sendSms({
+      to: user.phone,
+      message: `Your ID verification was not approved: ${reason}. Please resubmit with a clearer photo.`,
+      template: 'idVerificationRejected',
+    })
+  }
+
+  return { message: 'Rejected' }
+}
+
+export async function getEstate(id: string) {
+  const { data, error } = await supabaseAdmin
+    .from('approved_estates')
+    .select('id, name, slug, description, transport_links, nearby_schools, seo_meta_description, active')
+    .eq('id', id)
+    .single()
+  if (error || !data) throw notFound('Estate not found')
+  return data
+}
+
+export async function updateEstate(
+  id: string,
+  input: {
+    description?: string
+    transport_links?: string[]
+    nearby_schools?: string[]
+    seo_meta_description?: string
+  }
+) {
+  const patch: Record<string, unknown> = {}
+  if (input.description !== undefined) patch.description = input.description
+  if (input.transport_links !== undefined) patch.transport_links = input.transport_links
+  if (input.nearby_schools !== undefined) patch.nearby_schools = input.nearby_schools
+  if (input.seo_meta_description !== undefined) patch.seo_meta_description = input.seo_meta_description
+
+  const { data, error } = await supabaseAdmin
+    .from('approved_estates')
+    .update(patch)
+    .eq('id', id)
+    .select('id, name, slug, description, transport_links, nearby_schools, seo_meta_description')
+    .single()
+  if (error) throw unprocessable(error.message)
+  return data
 }
 
 export async function getRevenueReport(month: string) {

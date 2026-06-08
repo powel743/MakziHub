@@ -4,6 +4,7 @@ import {
   createAgency,
   getAgency,
   inviteMember,
+  getAgencyMembers,
   validateCsvImport,
   confirmCsvImport,
 } from './agencies.service'
@@ -33,6 +34,14 @@ export async function inviteMemberHandler(request: FastifyRequest, reply: Fastif
   }
   const result = await inviteMember(id, parsed.data.email, parsed.data.role, request.user.sub)
   reply.send(result)
+}
+
+export async function getMembersHandler(request: FastifyRequest, reply: FastifyReply) {
+  const { id } = request.params as { id: string }
+  // Only the agency owner or an existing member may view the team
+  await assertAgencyMembership(id, request.user.sub)
+  const members = await getAgencyMembers(id)
+  reply.send({ members })
 }
 
 export async function importPreviewHandler(request: FastifyRequest, reply: FastifyReply) {

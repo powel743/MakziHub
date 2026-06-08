@@ -1,4 +1,4 @@
-import { listingQueue, paymentQueue, sitemapQueue } from '../queue'
+import { listingExpiryQueue, planExpiryQueue, sitemapQueue } from '../queue'
 import logger from '../../utils/logger'
 
 // EAT is UTC+3 — cron expressions are in UTC
@@ -8,7 +8,7 @@ import logger from '../../utils/logger'
 
 export async function registerCronJobs(): Promise<void> {
   // listing-expiry-check — daily at 2am EAT (23:00 UTC)
-  await listingQueue.add(
+  await listingExpiryQueue.add(
     'listing-expiry-check',
     {},
     {
@@ -28,7 +28,7 @@ export async function registerCronJobs(): Promise<void> {
   )
 
   // plan-expiry-check — daily at 1am EAT (22:00 UTC)
-  await paymentQueue.add(
+  await planExpiryQueue.add(
     'plan-expiry-check',
     {},
     {

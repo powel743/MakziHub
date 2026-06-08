@@ -2,6 +2,7 @@ import './config/env' // Validate env first — will exit if invalid
 import { buildApp } from './app'
 import { connectRedis } from './config/redis'
 import { registerCronJobs } from './jobs/schedulers/cron'
+import { startWorkers } from './jobs/worker'
 import logger from './utils/logger'
 
 const PORT = parseInt(process.env.PORT ?? '3000', 10)
@@ -22,6 +23,10 @@ async function main() {
 
     // Start server
     await app.listen({ port: PORT, host: HOST })
+
+    // Start BullMQ workers (consume the queues the cron + routes enqueue to)
+    startWorkers()
+
     logger.info(`MakaziHub API running on http://${HOST}:${PORT}`)
     logger.info(`Swagger docs at http://${HOST}:${PORT}/docs`)
   } catch (err) {

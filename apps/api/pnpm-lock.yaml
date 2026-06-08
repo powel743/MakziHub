@@ -29,9 +29,6 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.45.4
         version: 2.106.1
-      '@types/ws':
-        specifier: ^8.18.1
-        version: 8.18.1
       axios:
         specifier: ^1.7.7
         version: 1.16.1
@@ -75,6 +72,9 @@ importers:
       '@types/node':
         specifier: ^22.7.4
         version: 22.19.19
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
       tsx:
         specifier: ^4.19.1
         version: 4.22.3

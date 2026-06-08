@@ -3,4 +3,8 @@ Allow: /
 Disallow: /admin/
 Disallow: /tenant/
 Disallow: /lister/
-Sitemap: https://makazihub.co.ke/sitemap.xml
+
+# The sitemap is served live by the Render backend at /sitemap.xml.
+# Cloudflare proxies https://www.makazihub.co.ke/sitemap.xml -> Render
+# via a Transform/Page Rule so it resolves at the site root for crawlers.
+Sitemap: https://www.makazihub.co.ke/sitemap.xml

@@ -28,8 +28,15 @@ export const SUBSCRIPTION_PLANS: Record<string, { price: number; role: string; p
   business: { price: 8000, role: 'agency', plan: 'business' },
 }
 
+// Featured-boost plans (PRD §3.2 featured placement)
+export const BOOST_PLANS: Record<string, { days: number; price: number }> = {
+  '7day': { days: 7, price: 500 },
+  '14day': { days: 14, price: 900 },
+  '30day': { days: 30, price: 1500 },
+}
+
 export const BOOST_PRICES: Record<number, number> = {
-  7: 200,
-  14: 350,
-  30: 500,
+  7: 500,
+  14: 900,
+  30: 1500,
 }
