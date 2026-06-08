@@ -81,7 +81,7 @@ export default function EstateLandingPage() {
         </div>
         <ListingGrid listings={listings} isLoading={isLoading} />
         {pagination && (
-          <Pagination page={page} totalPages={pagination.total_pages} onPageChange={setPage} />
+          <Pagination page={page} totalPages={pagination.pages} onPageChange={setPage} />
         )}
 
         {/* About {estate} — unique SEO content (PRD §9.4) */}

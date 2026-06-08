@@ -21,7 +21,8 @@ export default function HomePage() {
   const [estate, setEstate] = useState('')
   const [maxRent, setMaxRent] = useState('')
 
-  const { listings: featured, isLoading } = useListings({ sort: 'featured', limit: 6, page: 1 })
+  // API orders featured/boosted listings first, so 'newest' surfaces them on top.
+  const { listings: featured, isLoading } = useListings({ sort: 'newest', limit: 6, page: 1 })
 
   const handleSearch = () => {
     const params = new URLSearchParams()

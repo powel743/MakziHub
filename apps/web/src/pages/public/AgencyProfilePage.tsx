@@ -45,11 +45,13 @@ export default function AgencyProfilePage() {
               <p className="text-gray-500 mt-2 max-w-xl">{agency.description}</p>
               <div className="flex items-center gap-5 mt-4 text-sm text-gray-500">
                 <span className="flex items-center gap-1.5">
-                  <Building2 className="w-4 h-4" /> {agency.listing_count} active listings
+                  <Building2 className="w-4 h-4" /> {agency.listing_count ?? agency.listings?.length ?? 0} active listings
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4" /> Member since {formatDate(agency.member_since)}
-                </span>
+                {(agency.member_since || agency.created_at) && (
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="w-4 h-4" /> Member since {formatDate(agency.member_since || agency.created_at)}
+                  </span>
+                )}
               </div>
             </div>
           </div>

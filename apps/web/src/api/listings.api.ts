@@ -29,7 +29,17 @@ export const getListings = async (filters: ListingFilters): Promise<ListingsResp
     Object.entries(filters).filter(([, v]) => v !== undefined && v !== '' && v !== null)
   )
   const res = await client.get('/listings', { params })
-  return res.data
+  // The API returns { listings, total, page, pages }. Normalise to { data, meta }.
+  const body = res.data ?? {}
+  return {
+    data: body.data ?? body.listings ?? [],
+    meta: {
+      total: body.meta?.total ?? body.total ?? 0,
+      page: body.meta?.page ?? body.page ?? 1,
+      pages: body.meta?.pages ?? body.pages ?? 0,
+      limit: body.meta?.limit ?? filters.limit ?? 20,
+    },
+  }
 }
 
 export const getListing = async (id: string): Promise<Listing> => {

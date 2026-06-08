@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useSeoMeta } from '../../hooks/useSeoMeta'
-import { Map, Grid3X3 } from 'lucide-react'
+import { Map, Grid3X3, SlidersHorizontal } from 'lucide-react'
 import { useListings } from '../../hooks/useListings'
 import { useListingsStore } from '../../store/listings.store'
 import { ListingGrid } from '../../components/listings/ListingGrid'
@@ -15,6 +15,7 @@ export default function ListingsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const { filters, setFilters, resetFilters } = useListingsStore()
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid')
+  const [showFilters, setShowFilters] = useState(false)
 
   // Sync URL → store on mount
   useEffect(() => {
@@ -68,6 +69,12 @@ export default function ListingsPage() {
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={() => setShowFilters((v) => !v)}
+              className="lg:hidden flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200"
+            >
+              <SlidersHorizontal className="w-4 h-4" /> Filters
+            </button>
+            <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
               title="Grid view"
@@ -84,9 +91,9 @@ export default function ListingsPage() {
           </div>
         </div>
 
-        <div className="flex gap-6">
-          {/* Filters sidebar */}
-          <div className="w-64 flex-shrink-0 hidden lg:block">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Filters — sidebar on desktop, collapsible panel on mobile */}
+          <div className={`${showFilters ? 'block' : 'hidden'} lg:block w-full lg:w-64 flex-shrink-0`}>
             <ListingFiltersPanel
               filters={filters}
               onChange={handleFilterChange}
@@ -109,10 +116,10 @@ export default function ListingsPage() {
               <ListingGrid listings={listings} isLoading={isLoading} />
             )}
 
-            {pagination && pagination.total_pages > 1 && (
+            {pagination && pagination.pages > 1 && (
               <Pagination
                 page={filters.page ?? 1}
-                totalPages={pagination.total_pages}
+                totalPages={pagination.pages}
                 onPageChange={(p) => handleFilterChange({ page: p })}
               />
             )}

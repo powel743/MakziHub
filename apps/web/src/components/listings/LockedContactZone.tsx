@@ -17,7 +17,7 @@ interface LockedContactZoneProps {
 export function LockedContactZone({ listing }: LockedContactZoneProps) {
   const { user, isAuthenticated } = useAuth()
   const queryClient = useQueryClient()
-  const [contactDetails, setContactDetails] = useState<ContactDetails | null>(listing.contact_details)
+  const [contactDetails, setContactDetails] = useState<ContactDetails | null>(listing.contact_details ?? null)
   const [showMpesa, setShowMpesa] = useState(false)
   const [checkoutId, setCheckoutId] = useState<string | null>(null)
 

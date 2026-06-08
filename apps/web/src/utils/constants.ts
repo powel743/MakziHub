@@ -118,6 +118,32 @@ export interface ContactDetails {
   whatsapp_url: string
 }
 
+export interface ListingPhoto {
+  id: string
+  url: string
+  order: number
+}
+
+export interface Notification {
+  id: string
+  type?: string
+  title: string
+  body: string
+  read: boolean
+  metadata?: Record<string, unknown> | null
+  created_at: string
+}
+
+export interface SearchAlert {
+  id: string
+  estate?: string | null
+  max_rent?: number | null
+  bedrooms?: number | null
+  house_type?: string | null
+  active?: boolean
+  created_at?: string
+}
+
 export interface Inquiry {
   inquiry_id: string
   unlocked_at: string | null
@@ -175,7 +201,14 @@ export interface Listing {
   } | null
   created_at: string
   updated_at?: string
-  listing_photos?: Array<{ id: string; url: string; order: number }>
+  /** Detail endpoint returns photos[] + amenities[] + contact_details; list
+   *  endpoints return cover_photo_url / listing_photos. All optional so one
+   *  Listing type covers every endpoint's shape. */
+  photos?: ListingPhoto[]
+  amenities?: string[]
+  contact_details?: ContactDetails | null
+  furnished?: boolean
+  listing_photos?: ListingPhoto[]
   listing_amenities?: Array<{ amenity: string }>
 }
 

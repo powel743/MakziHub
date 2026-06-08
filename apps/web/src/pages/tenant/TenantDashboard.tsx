@@ -128,7 +128,7 @@ export default function TenantDashboard() {
                 <div key={alert.id} className="px-6 py-3 flex items-center gap-3">
                   <Bell className="w-4 h-4 text-gray-400 flex-shrink-0" />
                   <div className="flex-1 text-sm text-gray-700">
-                    {alert.estate} · Max {formatKES(alert.max_rent)}
+                    {alert.estate} · Max {formatKES(alert.max_rent ?? 0)}
                     {alert.bedrooms ? ` · ${alert.bedrooms} bed` : ''}
                   </div>
                   <button onClick={() => removeAlert(alert.id)} className="text-gray-300 hover:text-red-400 p-1">

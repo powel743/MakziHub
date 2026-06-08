@@ -98,8 +98,8 @@ export default function MyListings() {
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
-                            {l.photos?.[0] ? (
-                              <img src={l.photos[0].url} alt="" className="w-full h-full object-cover" />
+                            {(l.photos?.[0]?.url ?? l.listing_photos?.[0]?.url ?? l.cover_photo_url) ? (
+                              <img src={l.photos?.[0]?.url ?? l.listing_photos?.[0]?.url ?? l.cover_photo_url ?? ''} alt={`${l.title} — ${l.estate}`} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-xl">🏠</div>
                             )}
@@ -110,7 +110,7 @@ export default function MyListings() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-4 font-medium text-gray-900">{formatKES(l.rent)}/mo</td>
+                      <td className="px-5 py-4 font-medium text-gray-900">{formatKES(l.rent_ksh)}/mo</td>
                       <td className="px-5 py-4">
                         <Badge variant={l.status === 'available' ? 'green' : l.status === 'suspended' ? 'red' : 'gray'}>
                           {l.status}

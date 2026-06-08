@@ -8,6 +8,7 @@ import { Footer } from './components/layout/Footer'
 import { ProtectedRoute, RoleGuard } from './utils/router.guards'
 import { useAuthStore } from './store/auth.store'
 import { PageSpinner } from './components/ui/Spinner'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 // Public pages
 const HomePage = lazy(() => import('./pages/public/HomePage'))
@@ -178,13 +179,15 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <AppRoutes />
-          <ToastProvider />
-        </BrowserRouter>
-      </HelmetProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <HelmetProvider>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <AppRoutes />
+            <ToastProvider />
+          </BrowserRouter>
+        </HelmetProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   )
 }

@@ -104,7 +104,7 @@ export default function ListingDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left col */}
           <div className="lg:col-span-2 space-y-8">
-            <PhotoGallery photos={listing.photos} title={listing.title} estate={listing.estate} />
+            <PhotoGallery photos={listing.photos ?? []} title={listing.title} estate={listing.estate} />
 
             {/* Title & key info */}
             <div>
@@ -122,10 +122,10 @@ export default function ListingDetailPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-primary">{formatKES(listing.rent)}</div>
+                  <div className="text-3xl font-bold text-primary">{formatKES(listing.rent_ksh)}</div>
                   <div className="text-sm text-gray-500">per month</div>
-                  {listing.deposit && (
-                    <div className="text-sm text-gray-400 mt-1">Deposit: {formatKES(listing.deposit)}</div>
+                  {listing.deposit_ksh != null && (
+                    <div className="text-sm text-gray-400 mt-1">Deposit: {formatKES(listing.deposit_ksh)}</div>
                   )}
                 </div>
               </div>
@@ -166,7 +166,7 @@ export default function ListingDetailPage() {
             {/* Amenities */}
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Amenities</h2>
-              <AmenitiesList amenities={listing.amenities} showAll />
+              <AmenitiesList amenities={listing.amenities ?? []} showAll />
             </div>
 
             {/* Lister info */}

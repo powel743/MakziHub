@@ -36,16 +36,16 @@ export function ListingMap({ listings }: ListingMapProps) {
           <Marker key={listing.id} position={[listing.lat!, listing.lng!]}>
             <Popup>
               <div className="w-52">
-                {listing.photos?.[0] && (
+                {(listing.photos?.[0]?.url ?? listing.cover_photo_url) && (
                   <img
-                    src={listing.photos[0].url}
+                    src={listing.photos?.[0]?.url ?? listing.cover_photo_url ?? ''}
                     alt={listing.title}
                     className="w-full h-24 object-cover rounded-t"
                   />
                 )}
                 <div className="p-2">
                   <p className="font-semibold text-sm text-gray-900 leading-tight">{listing.title}</p>
-                  <p className="text-primary font-bold text-sm mt-1">{formatKES(listing.rent)}/mo</p>
+                  <p className="text-primary font-bold text-sm mt-1">{formatKES(listing.rent_ksh)}/mo</p>
                   <p className="text-gray-500 text-xs">{listing.estate} · {formatHouseType(listing.house_type)}</p>
                   <Link
                     to={`/listings/${listing.id}`}

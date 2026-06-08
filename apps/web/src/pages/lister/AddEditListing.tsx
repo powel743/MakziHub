@@ -54,17 +54,17 @@ export default function AddEditListing() {
           title: l.title,
           estate: l.estate,
           house_type: l.house_type,
-          rent_ksh: l.rent,
-          deposit_ksh: l.deposit,
+          rent_ksh: l.rent_ksh,
+          deposit_ksh: l.deposit_ksh,
           bedrooms: l.bedrooms,
           bathrooms: l.bathrooms,
           description: l.description,
           available_from: l.available_from.split('T')[0],
-          amenities: l.amenities,
-          furnished: l.furnished,
+          amenities: l.amenities ?? [],
+          furnished: l.furnished ?? false,
           address: l.address || '',
         })
-        setPhotos(l.photos)
+        setPhotos(l.photos ?? [])
       })
     }
   }, [id, isEdit, reset])

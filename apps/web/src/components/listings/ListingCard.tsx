@@ -32,7 +32,7 @@ export function ListingCard({ listing }: ListingCardProps) {
     }
   }
 
-  const coverPhoto = listing.photos?.[0]?.url
+  const coverPhoto = listing.photos?.[0]?.url ?? listing.cover_photo_url ?? undefined
 
   return (
     <Link
@@ -97,7 +97,7 @@ export function ListingCard({ listing }: ListingCardProps) {
             {listing.title}
           </h3>
           <span className="flex-shrink-0 text-base font-bold text-primary">
-            {formatKES(listing.rent)}
+            {formatKES(listing.rent_ksh)}
           </span>
         </div>
 

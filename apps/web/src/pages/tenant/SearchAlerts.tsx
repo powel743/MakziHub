@@ -73,7 +73,7 @@ export default function SearchAlerts() {
                 <div className="flex-1">
                   <p className="font-medium text-gray-900">{alert.estate || 'Any estate'}</p>
                   <p className="text-sm text-gray-500">
-                    Max {formatKES(alert.max_rent)}
+                    Max {formatKES(alert.max_rent ?? 0)}
                     {alert.bedrooms ? ` · ${alert.bedrooms} bed` : ''}
                     {alert.house_type ? ` · ${alert.house_type.replace(/_/g, ' ')}` : ''}
                   </p>
