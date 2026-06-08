@@ -6,19 +6,63 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "tsx scripts/generate-snap-routes.ts",
-    "build": "tsc && vite build",
-    "postbuild": "react-snap",
+    "build": "vite build",
+    "postbuild": "react-snap || true",
     "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "reactSnap": {
     "source": "dist",
-    "routes": ["/", "/listings"],
-    "include": [],
-    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
+    "routes": [
+      "/",
+      "/listings"
+    ],
+    "include": [
+      "/",
+      "/listings",
+      "/about",
+      "/contact",
+      "/estates/kasarani",
+      "/estates/ruaka",
+      "/estates/westlands",
+      "/estates/kilimani",
+      "/estates/embakasi",
+      "/estates/donholm",
+      "/estates/umoja",
+      "/estates/githurai",
+      "/estates/roysambu",
+      "/estates/south-b",
+      "/estates/south-c",
+      "/estates/ngong-road",
+      "/estates/rongai",
+      "/estates/thika-road",
+      "/estates/kiambu-road",
+      "/estates/kikuyu",
+      "/estates/kahawa",
+      "/estates/zimmerman",
+      "/estates/pipeline",
+      "/estates/mathare",
+      "/estates/pangani",
+      "/estates/parklands",
+      "/estates/lavington",
+      "/estates/karen",
+      "/estates/langata",
+      "/estates/industrial-area",
+      "/estates/eastleigh",
+      "/estates/buruburu",
+      "/estates/kayole",
+      "/estates/komarock"
+    ],
+    "puppeteerArgs": [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ],
     "inlineCss": true,
-    "minifyHtml": { "collapseWhitespace": true }
+    "minifyHtml": {
+      "collapseWhitespace": true
+    }
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

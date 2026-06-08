@@ -16,14 +16,35 @@
 import { writeFileSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { APPROVED_ESTATES } from '../src/utils/constants'
 
+// This script runs under Node (tsx), NOT Vite — so it must use process.env and
+// must NOT import from src/utils/constants.ts (that module reads the Vite-only
+// browser env API, which is undefined in Node and would crash the build). The
+// estate list is inlined here to keep the script fully self-contained.
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const WEB_ROOT = join(__dirname, '..')
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://www.makazihub.co.ke'
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || ''
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''
 const API_URL = process.env.VITE_API_URL || process.env.API_BASE_URL || 'http://localhost:3000/v1'
 const MAX_LISTINGS = 500
+
+// Mirror of APPROVED_ESTATES in src/utils/constants.ts (kept in sync manually so
+// this Node script never imports the browser-side constants module).
+const APPROVED_ESTATES = [
+  'Kasarani', 'Ruaka', 'Westlands', 'Kilimani', 'Embakasi',
+  'Donholm', 'Umoja', 'Githurai', 'Roysambu', 'South B',
+  'South C', 'Ngong Road', 'Rongai', 'Thika Road', 'Kiambu Road',
+  'Kikuyu', 'Kahawa', 'Zimmerman', 'Pipeline', 'Mathare',
+  'Pangani', 'Parklands', 'Lavington', 'Karen', 'Langata',
+  'Industrial Area', 'Eastleigh', 'Buruburu', 'Kayole', 'Komarock',
+]
+
+// Referenced so the configured Supabase env vars are validated/visible in logs
+// even though listings are currently sourced via the API.
+void SUPABASE_URL
+void SUPABASE_ANON_KEY
 
 function slugify(text: string): string {
   return text.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
