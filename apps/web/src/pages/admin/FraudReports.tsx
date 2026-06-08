@@ -35,7 +35,7 @@ export default function FraudReports() {
       <Helmet><title>Fraud Reports — MakaziHub Admin</title></Helmet>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold font-display text-gray-900">Fraud Reports</h1>
+          <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">Fraud Reports</h1>
           <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
             <button
               onClick={() => setResolved(false)}
@@ -53,14 +53,14 @@ export default function FraudReports() {
         </div>
 
         {isLoading ? <PageSpinner /> : reports.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
             <Flag className="w-12 h-12 text-gray-200 mx-auto mb-3" />
             <p className="text-gray-500">No {resolved ? 'resolved' : 'open'} reports</p>
           </div>
         ) : (
           <div className="space-y-4">
             {reports.map((r: any) => (
-              <div key={r.id} className="bg-white rounded-2xl border border-gray-100 p-5">
+              <div key={r.id} className="bg-white rounded-xl border border-gray-200 p-5">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center flex-shrink-0">

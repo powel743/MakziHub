@@ -37,7 +37,7 @@ export function ListingCard({ listing }: ListingCardProps) {
   return (
     <Link
       to={`/listings/${listing.id}`}
-      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 flex flex-col"
+      className="group bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col"
     >
       {/* Photo */}
       <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
@@ -49,7 +49,7 @@ export function ListingCard({ listing }: ListingCardProps) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
             <span className="text-5xl">🏠</span>
           </div>
         )}
@@ -85,7 +85,7 @@ export function ListingCard({ listing }: ListingCardProps) {
         {/* Featured label */}
         {listing.status === 'available' && listing.saved_count > 10 && (
           <div className="absolute top-3 left-3">
-            <span className="bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-full">HOT</span>
+            <span className="bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">POPULAR</span>
           </div>
         )}
       </div>
@@ -96,7 +96,7 @@ export function ListingCard({ listing }: ListingCardProps) {
           <h3 className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {listing.title}
           </h3>
-          <span className="flex-shrink-0 text-base font-bold text-primary">
+          <span className="flex-shrink-0 text-base font-bold text-gray-900">
             {formatKES(listing.rent_ksh)}
           </span>
         </div>

@@ -56,7 +56,7 @@ export default function VerificationQueue() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center gap-3 mb-6">
           <ShieldCheck className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold font-display text-gray-900">ID Verifications</h1>
+          <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">ID Verifications</h1>
         </div>
 
         <div className="flex gap-2 mb-6">
@@ -76,15 +76,15 @@ export default function VerificationQueue() {
         {isLoading ? (
           <PageSpinner />
         ) : rows.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
             <ShieldCheck className="w-12 h-12 text-gray-200 mx-auto mb-3" />
             <p className="text-gray-500 text-sm">No {tab} verifications.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-x-auto">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
             <table className="w-full text-sm min-w-[640px]">
               <thead>
-                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-200 bg-gray-50">
                   <th className="px-5 py-3">Lister</th>
                   <th className="px-5 py-3">Type</th>
                   <th className="px-5 py-3">Submitted</th>

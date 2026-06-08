@@ -44,7 +44,7 @@ export default function ListingModeration() {
     <>
       <Helmet><title>Listing Moderation — MakaziHub Admin</title></Helmet>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold font-display text-gray-900 mb-6">Listing Moderation</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-6">Listing Moderation</h1>
 
         {/* Tabs */}
         <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6 w-fit">
@@ -62,15 +62,15 @@ export default function ListingModeration() {
         </div>
 
         {isLoading ? <PageSpinner /> : listings.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
             <CheckCircle className="w-12 h-12 text-gray-200 mx-auto mb-3" />
             <p className="text-gray-500">No {status} listings</p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-x-auto">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
             <table className="w-full text-sm min-w-[640px]">
               <thead>
-                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-200 bg-gray-50">
                   <th className="px-5 py-3">Listing</th>
                   <th className="px-5 py-3">Lister</th>
                   <th className="px-5 py-3">Rent</th>

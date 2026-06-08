@@ -26,7 +26,7 @@ export default function CsvImport() {
   if (plan !== 'business') {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
           <Lock className="w-8 h-8 text-gray-400" />
         </div>
         <h2 className="text-xl font-bold text-gray-900 mb-2">CSV Bulk Import is a Business feature</h2>
@@ -80,11 +80,11 @@ export default function CsvImport() {
     <>
       <Helmet><title>CSV Import — MakaziHub</title></Helmet>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold font-display text-gray-900 mb-2">Bulk CSV Import</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-2">Bulk CSV Import</h1>
         <p className="text-gray-500 text-sm mb-6">Upload a CSV file to import multiple listings at once.</p>
 
         {!preview && (
-          <div className="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-12 text-center hover:border-primary transition-colors">
+          <div className="bg-white rounded-xl border-2 border-dashed border-gray-200 p-12 text-center hover:border-primary transition-colors">
             <Upload className="w-12 h-12 text-gray-300 mx-auto mb-4" />
             <h2 className="font-semibold text-gray-900 mb-2">Upload your CSV file</h2>
             <p className="text-sm text-gray-500 mb-4">Required columns: title, estate, address, rent_ksh, house_type, bedrooms, bathrooms, available_from</p>
@@ -117,10 +117,10 @@ export default function CsvImport() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-auto">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-100 text-gray-400 uppercase tracking-wide">
+                  <tr className="bg-gray-50 border-b border-gray-200 text-gray-400 uppercase tracking-wide">
                     <th className="px-4 py-2 text-left">#</th>
                     <th className="px-4 py-2 text-left">Title</th>
                     <th className="px-4 py-2 text-left">Estate</th>
@@ -145,7 +145,7 @@ export default function CsvImport() {
             </div>
 
             {preview.errors.length > 0 && (
-              <div className="mt-4 bg-red-50 border border-red-100 rounded-2xl p-4">
+              <div className="mt-4 bg-red-50 border border-red-100 rounded-xl p-4">
                 <p className="text-sm font-semibold text-red-700 mb-2">Rows with errors (skipped)</p>
                 <ul className="space-y-1 text-xs text-red-600">
                   {preview.errors.map((err, i) => (

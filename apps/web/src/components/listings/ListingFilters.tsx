@@ -11,7 +11,7 @@ interface ListingFiltersProps {
 
 export function ListingFiltersPanel({ filters, onChange, onReset }: ListingFiltersProps) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-5 sticky top-24">
+    <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-5 sticky top-24">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-gray-900 flex items-center gap-2">
           <SlidersHorizontal className="w-4 h-4 text-primary" />
@@ -28,7 +28,7 @@ export function ListingFiltersPanel({ filters, onChange, onReset }: ListingFilte
         <select
           value={filters.estate || ''}
           onChange={(e) => onChange({ estate: e.target.value || undefined })}
-          className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors"
         >
           <option value="">All Estates</option>
           {APPROVED_ESTATES.sort().map((e) => (
@@ -46,14 +46,14 @@ export function ListingFiltersPanel({ filters, onChange, onReset }: ListingFilte
             placeholder="Min"
             value={filters.min_rent || ''}
             onChange={(e) => onChange({ min_rent: e.target.value ? Number(e.target.value) : undefined })}
-            className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors"
           />
           <input
             type="number"
             placeholder="Max"
             value={filters.max_rent || ''}
             onChange={(e) => onChange({ max_rent: e.target.value ? Number(e.target.value) : undefined })}
-            className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors"
           />
         </div>
       </div>
@@ -84,7 +84,7 @@ export function ListingFiltersPanel({ filters, onChange, onReset }: ListingFilte
         <select
           value={filters.house_type || ''}
           onChange={(e) => onChange({ house_type: e.target.value || undefined })}
-          className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors"
         >
           <option value="">All Types</option>
           {HOUSE_TYPES.map((t) => (
@@ -121,7 +121,7 @@ export function ListingFiltersPanel({ filters, onChange, onReset }: ListingFilte
         <select
           value={filters.sort || 'newest'}
           onChange={(e) => onChange({ sort: e.target.value as ListingFilters['sort'] })}
-          className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors"
         >
           <option value="newest">Newest First</option>
           <option value="price_asc">Price: Low to High</option>

@@ -37,27 +37,27 @@ export default function TenantDashboard() {
       <Helmet><title>My Dashboard — MakaziHub Tenant</title></Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold font-display text-gray-900">Welcome back, {user?.name?.split(' ')[0]} 👋</h1>
+          <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">Welcome back, {user?.name?.split(' ')[0]} 👋</h1>
           <p className="text-gray-500 mt-1 text-sm">Your rental search dashboard</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
             <div className="flex items-center gap-3 mb-2">
               <Search className="w-5 h-5 text-primary" />
               <span className="text-sm font-medium text-gray-500">Active Alerts</span>
             </div>
             <p className="text-3xl font-bold text-gray-900">{alerts.length}</p>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
             <div className="flex items-center gap-3 mb-2">
               <Heart className="w-5 h-5 text-red-400" />
               <span className="text-sm font-medium text-gray-500">Unlocked Contacts</span>
             </div>
             <p className="text-3xl font-bold text-gray-900">{inquiries.length}</p>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
             <div className="flex items-center gap-3 mb-2">
               <CreditCard className="w-5 h-5 text-amber-500" />
               <span className="text-sm font-medium text-gray-500">Free Credits</span>
@@ -82,7 +82,7 @@ export default function TenantDashboard() {
         </div>
 
         {/* Recent unlocks */}
-        <div className="bg-white rounded-2xl border border-gray-100 mb-6">
+        <div className="bg-white rounded-xl border border-gray-200 mb-6">
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
             <h2 className="font-semibold text-gray-900">Recent Unlocked Contacts</h2>
             <Link to="/tenant/inquiries" className="text-sm text-primary hover:underline">View all →</Link>
@@ -113,7 +113,7 @@ export default function TenantDashboard() {
         </div>
 
         {/* Search alerts */}
-        <div className="bg-white rounded-2xl border border-gray-100">
+        <div className="bg-white rounded-xl border border-gray-200">
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
             <h2 className="font-semibold text-gray-900">Your Search Alerts</h2>
             <Link to="/tenant/alerts" className="text-sm text-primary hover:underline">Manage →</Link>

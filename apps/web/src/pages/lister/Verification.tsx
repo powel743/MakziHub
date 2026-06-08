@@ -60,9 +60,9 @@ export default function Verification() {
   const status = data?.status ?? 'unverified'
 
   const UploadForm = (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
+    <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
           <CreditCard className="w-6 h-6" />
         </div>
         <div>
@@ -109,13 +109,13 @@ export default function Verification() {
     <>
       <Helmet><title>Verification — MakaziHub Lister</title></Helmet>
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold font-display text-gray-900 mb-2">ID Verification</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-2">ID Verification</h1>
         <p className="text-gray-500 text-sm mb-8">
           Verified listers earn a badge and more tenant trust. Submit a government ID to get verified.
         </p>
 
         {status === 'verified' && (
-          <div className="bg-white rounded-2xl border border-green-200 bg-green-50/40 p-8 text-center">
+          <div className="bg-white rounded-xl border border-green-200 bg-green-50/40 p-8 text-center">
             <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-7 h-7 text-green-600" />
             </div>
@@ -128,7 +128,7 @@ export default function Verification() {
         )}
 
         {status === 'pending' && (
-          <div className="bg-white rounded-2xl border border-amber-200 bg-amber-50/40 p-8 text-center">
+          <div className="bg-white rounded-xl border border-amber-200 bg-amber-50/40 p-8 text-center">
             <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
               <Clock className="w-7 h-7 text-amber-600" />
             </div>
@@ -142,7 +142,7 @@ export default function Verification() {
 
         {status === 'rejected' && (
           <div className="space-y-4">
-            <div className="bg-white rounded-2xl border border-red-200 bg-red-50/40 p-6">
+            <div className="bg-white rounded-xl border border-red-200 bg-red-50/40 p-6">
               <div className="flex items-center gap-2 mb-1">
                 <XCircle className="w-5 h-5 text-red-500" />
                 <h2 className="font-semibold text-gray-900">Verification not approved</h2>

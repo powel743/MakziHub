@@ -23,7 +23,7 @@ export default function Analytics() {
   if (plan === 'free') {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
           <Lock className="w-8 h-8 text-gray-400" />
         </div>
         <h2 className="text-xl font-bold text-gray-900 mb-2">Analytics is a Pro feature</h2>
@@ -65,11 +65,11 @@ export default function Analytics() {
     <>
       <Helmet><title>Analytics — MakaziHub Lister</title></Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold font-display text-gray-900 mb-6">Analytics (Last 30 Days)</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-6">Analytics (Last 30 Days)</h1>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {cards.map((c) => (
-            <div key={c.label} className="bg-white rounded-2xl border border-gray-100 p-5">
+            <div key={c.label} className="bg-white rounded-xl border border-gray-200 p-5">
               <p className="text-2xl font-bold text-gray-900">{c.value}</p>
               <p className="text-sm text-gray-500 mt-0.5">{c.label}</p>
             </div>
@@ -77,7 +77,7 @@ export default function Analytics() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
             <h2 className="font-semibold text-gray-900 mb-5">Views by Listing</h2>
             {viewsByListing.length === 0 ? (
               <p className="text-sm text-gray-400 py-12 text-center">No listing views yet.</p>
@@ -94,7 +94,7 @@ export default function Analytics() {
             )}
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
             <h2 className="font-semibold text-gray-900 mb-5">Contact Unlocks (Daily)</h2>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={unlocks.slice(-14)}>
@@ -109,13 +109,13 @@ export default function Analytics() {
         </div>
 
         {topListings.length > 0 && (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-50">
               <h2 className="font-semibold text-gray-900">Top Performing Listings</h2>
             </div>
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-200 bg-gray-50">
                   <th className="px-5 py-3">Listing</th>
                   <th className="px-5 py-3">Views</th>
                   <th className="px-5 py-3">Unlocks</th>

@@ -14,10 +14,10 @@ export default function MyInquiries() {
     <>
       <Helmet><title>My Inquiries — MakaziHub</title></Helmet>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold font-display text-gray-900 mb-6">Unlocked Contacts</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-6">Unlocked Contacts</h1>
 
         {inquiries.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
             <Phone className="w-12 h-12 text-gray-200 mx-auto mb-3" />
             <h2 className="font-semibold text-gray-900 mb-2">No unlocked contacts yet</h2>
             <p className="text-gray-500 text-sm mb-6">Browse listings and unlock contact details with KES 100.</p>
@@ -28,7 +28,7 @@ export default function MyInquiries() {
         ) : (
           <div className="space-y-4">
             {inquiries.map((inq) => (
-              <div key={inq.inquiry_id} className="bg-white rounded-2xl border border-gray-100 p-5">
+              <div key={inq.inquiry_id} className="bg-white rounded-xl border border-gray-200 p-5">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
                     <Link to={`/listings/${inq.listing?.id}`} className="font-semibold text-gray-900 hover:text-primary transition-colors">

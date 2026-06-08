@@ -41,7 +41,7 @@ export default function RevenueReports() {
       <Helmet><title>Revenue Reports — MakaziHub Admin</title></Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-          <h1 className="text-2xl font-bold font-display text-gray-900">Revenue Reports</h1>
+          <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">Revenue Reports</h1>
           <select
             value={month}
             onChange={(e) => setMonth(e.target.value)}
@@ -56,7 +56,7 @@ export default function RevenueReports() {
         {isLoading ? <PageSpinner /> : (
           <>
             {/* Total */}
-            <div className="bg-gradient-to-r from-primary to-green-700 text-white rounded-2xl p-6 mb-6">
+            <div className="bg-primary text-white rounded-xl p-6 mb-6">
               <p className="text-green-100 text-sm mb-1">Total Revenue — {months.find(m => m.value === month)?.label}</p>
               <p className="text-4xl font-bold">{formatKES(total)}</p>
             </div>
@@ -64,7 +64,7 @@ export default function RevenueReports() {
             {/* Breakdown cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
               {chartData.map((d) => (
-                <div key={d.name} className="bg-white rounded-2xl border border-gray-100 p-4">
+                <div key={d.name} className="bg-white rounded-xl border border-gray-200 p-4">
                   <p className="text-xs text-gray-500 mb-1">{d.name}</p>
                   <p className="text-xl font-bold text-gray-900">{formatKES(d.amount)}</p>
                   <p className="text-xs text-gray-400 mt-0.5">
@@ -75,7 +75,7 @@ export default function RevenueReports() {
             </div>
 
             {/* Chart */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
               <h2 className="font-semibold text-gray-900 mb-5">Revenue by Stream</h2>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={chartData} barSize={40}>

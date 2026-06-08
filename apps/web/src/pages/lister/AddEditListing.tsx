@@ -146,7 +146,7 @@ export default function AddEditListing() {
     <>
       <Helmet><title>{isEdit ? 'Edit Listing' : 'Add New Listing'} — MakaziHub</title></Helmet>
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold font-display text-gray-900 mb-6">
+        <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-6">
           {isEdit ? 'Edit Listing' : 'Add New Listing'}
         </h1>
 
@@ -165,7 +165,7 @@ export default function AddEditListing() {
           ))}
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
           {/* Step 1: Basic Info */}
           {step === 0 && (
             <div className="space-y-4">
@@ -262,7 +262,7 @@ export default function AddEditListing() {
           {step === 2 && (
             <div className="space-y-4">
               <h2 className="font-semibold text-gray-900 mb-4">Photos ({photos.length}/10)</h2>
-              <div className="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:border-primary transition-colors">
+              <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-primary transition-colors">
                 <Upload className="w-10 h-10 text-gray-300 mx-auto mb-3" />
                 <p className="text-sm text-gray-500 mb-3">Click to upload photos</p>
                 <label className="cursor-pointer">

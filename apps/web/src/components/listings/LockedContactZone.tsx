@@ -105,7 +105,7 @@ export function LockedContactZone({ listing }: LockedContactZoneProps) {
     return (
       <div className="relative rounded-2xl border border-gray-200 p-6 overflow-hidden">
         <div className="absolute inset-0 backdrop-blur-[2px] bg-white/60 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl">
-          <div className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center shadow-lg">
+          <div className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center">
             <Lock className="w-7 h-7 text-white" />
           </div>
           <div className="text-center">

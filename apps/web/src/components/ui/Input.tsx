@@ -30,8 +30,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={clsx(
-              'w-full rounded-xl border bg-white text-gray-900 placeholder-gray-400 transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+              'w-full rounded-lg border bg-white text-gray-900 placeholder-gray-400 transition-colors',
+              'focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500',
               'disabled:bg-gray-50 disabled:cursor-not-allowed',
               error ? 'border-red-400 focus:ring-red-400' : 'border-gray-200 hover:border-gray-300',
               leftIcon ? 'pl-10' : 'pl-4',

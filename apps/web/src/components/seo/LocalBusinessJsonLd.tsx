@@ -14,6 +14,12 @@ export function LocalBusinessJsonLd() {
     url: SITE_URL,
     areaServed: { '@type': 'City', name: 'Nairobi' },
     priceRange: 'KES 5,000 – KES 500,000/month',
+    sameAs: [
+      'https://x.com/MakaziHubKE_',
+      'https://www.tiktok.com/@makazihubke_',
+      'https://www.instagram.com/makazihubke_',
+      'https://www.facebook.com/profile.php?id=61590219427611',
+    ],
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Nairobi',

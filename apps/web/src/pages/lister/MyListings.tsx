@@ -67,24 +67,24 @@ export default function MyListings() {
       <Helmet><title>My Listings — MakaziHub</title></Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold font-display text-gray-900">My Listings ({listings.length})</h1>
+          <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">My Listings ({listings.length})</h1>
           <Link to="/lister/listings/new">
             <Button size="sm"><Plus className="w-4 h-4" /> Add Listing</Button>
           </Link>
         </div>
 
         {listings.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
             <h2 className="font-semibold text-gray-900 mb-2">No listings yet</h2>
             <p className="text-gray-500 text-sm mb-6">Post your first vacant unit and start getting inquiries.</p>
             <Link to="/lister/listings/new"><Button size="sm"><Plus className="w-4 h-4" /> Add Your First Listing</Button></Link>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                  <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-200 bg-gray-50">
                     <th className="px-5 py-3">Listing</th>
                     <th className="px-5 py-3">Rent</th>
                     <th className="px-5 py-3">Status</th>
@@ -160,7 +160,7 @@ export default function MyListings() {
         {boostFor && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40" onClick={closeBoost} />
-            <div className="relative bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+            <div className="relative bg-white rounded-xl shadow-sm p-6 w-full max-w-sm">
               {!boostSent ? (
                 <>
                   <h3 className="font-bold text-gray-900 mb-1">Boost this listing</h3>
@@ -202,7 +202,7 @@ export default function MyListings() {
         {deletingId && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40" onClick={() => setDeletingId(null)} />
-            <div className="relative bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm text-center">
+            <div className="relative bg-white rounded-xl shadow-sm p-6 w-full max-w-sm text-center">
               <h3 className="font-bold text-gray-900 mb-2">Delete listing?</h3>
               <p className="text-sm text-gray-500 mb-5">This action cannot be undone.</p>
               <div className="flex gap-3">

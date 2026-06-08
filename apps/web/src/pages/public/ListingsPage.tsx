@@ -53,11 +53,11 @@ export default function ListingsPage() {
     <>
       {useSeoMeta({ title: meta.title, description: meta.description, canonicalPath: '/listings' })}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header bar */}
         <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold font-display text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-gray-900">
               {filters.estate ? `Houses in ${filters.estate}` : 'All Listings'}
             </h1>
             {pagination && (

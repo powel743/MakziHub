@@ -89,7 +89,7 @@ export default function ListingDetailPage() {
         ]}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
           <Link to="/listings" className="flex items-center gap-1 hover:text-primary">
@@ -113,16 +113,16 @@ export default function ListingDetailPage() {
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <VerifiedBadge tier={listing.verified_tier} size="md" />
                     {listing.status === 'taken' && <Badge variant="red">Taken</Badge>}
-                    {listing.furnished && <Badge variant="blue">Furnished</Badge>}
+                    {listing.furnished && <Badge variant="gray">Furnished</Badge>}
                   </div>
-                  <h1 className="text-2xl sm:text-3xl font-bold font-display text-gray-900">{listing.title}</h1>
+                  <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-gray-900">{listing.title}</h1>
                   <div className="flex items-center gap-1 text-gray-500 mt-2">
                     <MapPin className="w-4 h-4 flex-shrink-0" />
                     <span className="text-sm">{listing.estate}, Nairobi</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-primary">{formatKES(listing.rent_ksh)}</div>
+                  <div className="text-3xl font-bold text-gray-900">{formatKES(listing.rent_ksh)}</div>
                   <div className="text-sm text-gray-500">per month</div>
                   {listing.deposit_ksh != null && (
                     <div className="text-sm text-gray-400 mt-1">Deposit: {formatKES(listing.deposit_ksh)}</div>
@@ -159,19 +159,19 @@ export default function ListingDetailPage() {
 
             {/* Description */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">About this property</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-gray-900 mb-3">About this property</h2>
               <p className="text-gray-600 leading-relaxed whitespace-pre-line">{listing.description}</p>
             </div>
 
             {/* Amenities */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Amenities</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-gray-900 mb-4">Amenities</h2>
               <AmenitiesList amenities={listing.amenities ?? []} showAll />
             </div>
 
             {/* Lister info */}
             {listing.lister && (
-            <div className="bg-gray-50 rounded-2xl p-5">
+            <div className="bg-gray-50 rounded-xl p-5">
               <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Listed by</h2>
               <div className="flex items-center gap-3">
                 {listing.lister.agency?.logo_url ? (
@@ -185,7 +185,7 @@ export default function ListingDetailPage() {
                   <p className="font-semibold text-gray-900 flex items-center gap-1.5">
                     {listing.lister.agency ? listing.lister.agency.name : listing.lister.name}
                     {listing.lister.id_verified && (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-green-600 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">
                         <CheckCircle className="w-3 h-3" /> Verified
                       </span>
                     )}
@@ -202,7 +202,7 @@ export default function ListingDetailPage() {
 
             {/* Reviews */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <h2 className="text-lg font-semibold tracking-tight text-gray-900 mb-4">
                 Reviews {reviews.length > 0 && <span className="text-gray-400 font-normal text-base">({reviews.length})</span>}
               </h2>
 
@@ -228,7 +228,7 @@ export default function ListingDetailPage() {
               </div>
 
               {isAuthenticated && user?.role === 'tenant' && (
-                <div className="border border-gray-200 rounded-2xl p-5">
+                <div className="border border-gray-200 rounded-xl p-5">
                   <h3 className="font-medium text-gray-900 mb-3">Leave a review</h3>
                   <div className="flex gap-2 mb-3">
                     {[1,2,3,4,5].map((s) => (
@@ -242,7 +242,7 @@ export default function ListingDetailPage() {
                     onChange={(e) => setReviewBody(e.target.value)}
                     rows={3}
                     placeholder="Share your experience with this listing..."
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors resize-none"
                   />
                   <Button
                     onClick={() => submitReviewMutation()}
@@ -287,7 +287,7 @@ export default function ListingDetailPage() {
           <p className="text-sm text-gray-500">Help us keep MakaziHub safe. Select a reason for reporting:</p>
           <div className="space-y-2">
             {['Fake or scam listing', 'Wrong location or estate', 'Already taken but still listed', 'Inappropriate content', 'Other'].map((reason) => (
-              <label key={reason} className="flex items-center gap-3 cursor-pointer p-3 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+              <label key={reason} className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
                 <input
                   type="radio"
                   name="reason"

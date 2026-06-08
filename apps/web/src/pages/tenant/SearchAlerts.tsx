@@ -48,7 +48,7 @@ export default function SearchAlerts() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold font-display text-gray-900">Search Alerts</h1>
+            <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">Search Alerts</h1>
             <p className="text-sm text-gray-500 mt-0.5">Get SMS when a matching listing is posted</p>
           </div>
           <Button onClick={() => setShowCreate(true)} size="sm">
@@ -57,7 +57,7 @@ export default function SearchAlerts() {
         </div>
 
         {alerts.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
             <Bell className="w-12 h-12 text-gray-200 mx-auto mb-3" />
             <h2 className="font-semibold text-gray-900 mb-2">No alerts yet</h2>
             <p className="text-gray-500 text-sm mb-6">Create an alert and we'll SMS you when matching listings appear.</p>
@@ -66,8 +66,8 @@ export default function SearchAlerts() {
         ) : (
           <div className="space-y-3">
             {alerts.map((alert) => (
-              <div key={alert.id} className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent flex items-center justify-center flex-shrink-0">
+              <div key={alert.id} className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-green-50 text-primary flex items-center justify-center flex-shrink-0">
                   <Bell className="w-5 h-5" />
                 </div>
                 <div className="flex-1">

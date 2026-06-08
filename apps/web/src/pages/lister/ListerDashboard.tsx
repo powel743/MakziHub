@@ -44,7 +44,7 @@ export default function ListerDashboard() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-bold font-display text-gray-900">Welcome back, {user?.name?.split(' ')[0]} 👋</h1>
+            <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">Welcome back, {user?.name?.split(' ')[0]} 👋</h1>
             <div className="flex items-center gap-2 mt-1.5">
               <Badge variant={plan === 'business' ? 'purple' : plan === 'pro' ? 'blue' : 'gray'}>
                 {plan.toUpperCase()} Plan
@@ -82,7 +82,7 @@ export default function ListerDashboard() {
             { icon: <Eye className="w-5 h-5" />, label: 'Profile Views (7d)', value: stats?.profile_views_7d ?? 0, color: 'text-purple-600 bg-purple-50' },
             { icon: <BarChart2 className="w-5 h-5" />, label: 'Unlocks This Month', value: stats?.unlocks_month ?? 0, color: 'text-amber-600 bg-amber-50' },
           ].map((s) => (
-            <div key={s.label} className="bg-white rounded-2xl border border-gray-100 p-5">
+            <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-5">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${s.color}`}>{s.icon}</div>
               <p className="text-2xl font-bold text-gray-900">{s.value}</p>
               <p className="text-sm text-gray-500 mt-0.5">{s.label}</p>
@@ -101,7 +101,7 @@ export default function ListerDashboard() {
             <Link
               key={a.to}
               to={a.to}
-              className={`flex flex-col items-center gap-2 bg-white border border-gray-100 rounded-xl p-4 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary transition-all ${a.locked ? 'opacity-50' : ''}`}
+              className={`flex flex-col items-center gap-2 bg-white border border-gray-200 rounded-xl p-4 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary transition-all ${a.locked ? 'opacity-50' : ''}`}
             >
               {a.icon}
               <span className="text-center leading-tight">{a.label}</span>
@@ -110,7 +110,7 @@ export default function ListerDashboard() {
         </div>
 
         {/* Recent inquiries */}
-        <div className="bg-white rounded-2xl border border-gray-100 mb-6">
+        <div className="bg-white rounded-xl border border-gray-200 mb-6">
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
             <h2 className="font-semibold text-gray-900">Recent Inquiries</h2>
             <Link to="/lister/inquiries" className="text-sm text-primary hover:underline">View all →</Link>
@@ -132,7 +132,7 @@ export default function ListerDashboard() {
         </div>
 
         {/* Listing performance */}
-        <div className="bg-white rounded-2xl border border-gray-100">
+        <div className="bg-white rounded-xl border border-gray-200">
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
             <h2 className="font-semibold text-gray-900">Listing Performance</h2>
             <Link to="/lister/listings" className="text-sm text-primary hover:underline">All listings →</Link>

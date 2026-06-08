@@ -53,11 +53,11 @@ export default function ListerBilling() {
     <>
       <Helmet><title>Billing & Plans — MakaziHub Lister</title></Helmet>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold font-display text-gray-900 mb-2">Billing & Plans</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-2">Billing & Plans</h1>
         <p className="text-gray-500 text-sm mb-8">Manage your subscription and upgrade to unlock more features.</p>
 
         {/* Current plan banner */}
-        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 mb-8 flex items-center gap-4">
+        <div className="bg-primary/5 border border-primary/20 rounded-xl p-5 mb-8 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <CreditCard className="w-6 h-6" />
           </div>
@@ -77,8 +77,8 @@ export default function ListerBilling() {
             return (
               <div
                 key={plan.key}
-                className={`relative bg-white rounded-2xl border p-6 transition-all ${
-                  plan.popular ? 'border-primary shadow-lg ring-1 ring-primary/20' : 'border-gray-100'
+                className={`relative bg-white rounded-xl border p-6 transition-all ${
+                  plan.popular ? 'border-primary shadow-sm ring-1 ring-primary/20' : 'border-gray-200'
                 }`}
               >
                 {plan.popular && (

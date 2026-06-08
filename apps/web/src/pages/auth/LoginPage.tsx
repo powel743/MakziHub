@@ -45,11 +45,11 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <img src={logoSrc} alt="MakaziHub" className="h-10 w-auto mx-auto mb-4" />
-            <h1 className="text-2xl font-bold font-display text-gray-900">Welcome back</h1>
+            <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">Welcome back</h1>
             <p className="text-gray-500 mt-1 text-sm">Sign in to your MakaziHub account</p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <Input
                 label="Email Address"

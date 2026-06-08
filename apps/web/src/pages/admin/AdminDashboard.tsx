@@ -33,11 +33,11 @@ export default function AdminDashboard() {
     <>
       <Helmet><title>Admin Dashboard — MakaziHub</title></Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold font-display text-gray-900 mb-6">Admin Dashboard</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-6">Admin Dashboard</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {cards.map((c) => (
-            <Link key={c.label} to={c.to} className="bg-white rounded-2xl border border-gray-100 p-5 hover:border-gray-200 hover:shadow-sm transition-all">
+            <Link key={c.label} to={c.to} className="bg-white rounded-xl border border-gray-200 p-5 hover:border-gray-200 hover:shadow-sm transition-all">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${c.color}`}>{c.icon}</div>
               <p className="text-2xl font-bold text-gray-900">{c.value}</p>
               <p className="text-sm text-gray-500 mt-0.5">{c.label}</p>
@@ -47,7 +47,7 @@ export default function AdminDashboard() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {links.map((l) => (
-            <Link key={l.to} to={l.to} className="flex items-start gap-4 bg-white rounded-2xl border border-gray-100 p-5 hover:border-primary hover:shadow-sm transition-all group">
+            <Link key={l.to} to={l.to} className="flex items-start gap-4 bg-white rounded-xl border border-gray-200 p-5 hover:border-primary hover:shadow-sm transition-all group">
               <div className="w-10 h-10 rounded-xl bg-gray-100 group-hover:bg-primary/10 text-gray-500 group-hover:text-primary flex items-center justify-center flex-shrink-0 transition-colors">
                 {l.icon}
               </div>

@@ -75,12 +75,12 @@ export default function OtpPage() {
         <div className="w-full max-w-sm text-center">
           <img src={logoSrc} alt="MakaziHub" className="h-10 w-auto mx-auto mb-6" />
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
             <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
               <Mail className="w-7 h-7 text-primary" />
             </div>
 
-            <h1 className="text-xl font-bold font-display text-gray-900 mb-1">Verify your email</h1>
+            <h1 className="text-xl font-bold font-display tracking-tight text-gray-900 mb-1">Verify your email</h1>
             <p className="text-sm text-gray-500 mb-6">
               Enter the 6-digit code sent to <strong>{email ? maskEmail(email) : 'your email'}</strong>
             </p>
@@ -96,7 +96,7 @@ export default function OtpPage() {
                   value={digit}
                   onChange={(e) => handleChange(i, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(i, e)}
-                  className="w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
                 />
               ))}
             </div>

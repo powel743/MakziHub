@@ -35,7 +35,7 @@ export default function UserManagement() {
     <>
       <Helmet><title>User Management — MakaziHub Admin</title></Helmet>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold font-display text-gray-900 mb-6">User Management</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-6">User Management</h1>
 
         <div className="mb-5 max-w-sm">
           <Input
@@ -47,14 +47,14 @@ export default function UserManagement() {
         </div>
 
         {isLoading ? <PageSpinner /> : users.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center text-gray-400">
+          <div className="bg-white rounded-xl border border-gray-200 p-16 text-center text-gray-400">
             No users found
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-x-auto">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
             <table className="w-full text-sm min-w-[640px]">
               <thead>
-                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-200 bg-gray-50">
                   <th className="px-5 py-3">User</th>
                   <th className="px-5 py-3">Role</th>
                   <th className="px-5 py-3">Phone</th>

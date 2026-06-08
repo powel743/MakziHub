@@ -49,11 +49,11 @@ export default function SignupPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <img src={logoSrc} alt="MakaziHub" className="h-10 w-auto mx-auto mb-4" />
-            <h1 className="text-2xl font-bold font-display text-gray-900">Create your account</h1>
+            <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">Create your account</h1>
             <p className="text-gray-500 mt-1 text-sm">Join thousands finding homes in Nairobi</p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <Input
                 label="Full Name"
@@ -73,11 +73,11 @@ export default function SignupPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
                 <div className="flex">
-                  <span className="flex items-center px-3 bg-gray-50 border border-r-0 border-gray-200 rounded-l-xl text-sm text-gray-500 font-medium">+254</span>
+                  <span className="flex items-center px-3 bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg text-sm text-gray-500 font-medium">+254</span>
                   <input
                     type="tel"
                     placeholder="712345678"
-                    className="flex-1 px-4 py-2.5 text-sm border border-gray-200 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="flex-1 px-4 py-2.5 text-sm border border-gray-200 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors"
                     {...register('phone')}
                   />
                 </div>

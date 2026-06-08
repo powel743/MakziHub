@@ -36,7 +36,7 @@ export function useSeoMeta({ title, description, canonicalPath, image, type = 'w
       <meta property="og:site_name" content="MakaziHub" />
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@MakaziHub" />
+      <meta name="twitter:site" content="@MakaziHubKE_" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={img} />

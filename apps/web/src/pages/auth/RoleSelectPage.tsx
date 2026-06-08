@@ -46,9 +46,9 @@ export default function RoleSelectPage() {
             <button
               onClick={() => selectRole('tenant')}
               disabled={isLoading}
-              className="group bg-white border-2 border-gray-100 hover:border-primary rounded-2xl p-8 text-left transition-all hover:shadow-lg"
+              className="group bg-white border-2 border-gray-200 hover:border-primary rounded-xl p-8 text-left transition-all hover:shadow-sm"
             >
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-white transition-colors">
+              <div className="w-14 h-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-white transition-colors">
                 <Home className="w-7 h-7" />
               </div>
               <h2 className="text-lg font-bold text-gray-900 mb-2">I'm looking for a house</h2>
@@ -63,24 +63,24 @@ export default function RoleSelectPage() {
               <button
                 onClick={() => setShowListerOptions(!showListerOptions)}
                 disabled={isLoading}
-                className="group w-full bg-white border-2 border-gray-100 hover:border-accent rounded-2xl p-8 text-left transition-all hover:shadow-lg"
+                className="group w-full bg-white border-2 border-gray-200 hover:border-primary rounded-xl p-8 text-left transition-all hover:shadow-sm"
               >
-                <div className="w-14 h-14 rounded-2xl bg-amber-50 text-accent flex items-center justify-center mb-5 group-hover:bg-accent group-hover:text-white transition-colors">
+                <div className="w-14 h-14 rounded-xl bg-green-50 text-primary flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-white transition-colors">
                   <Building2 className="w-7 h-7" />
                 </div>
                 <h2 className="text-lg font-bold text-gray-900 mb-2">I'm listing a property</h2>
                 <p className="text-sm text-gray-500">Post vacant units and get enquiries from qualified tenants.</p>
-                <div className="mt-5 text-sm font-semibold text-accent flex items-center gap-1 group-hover:underline">
+                <div className="mt-5 text-sm font-semibold text-primary flex items-center gap-1 group-hover:underline">
                   Choose lister type <ChevronDown className={`w-4 h-4 transition-transform ${showListerOptions ? 'rotate-180' : ''}`} />
                 </div>
               </button>
 
               {showListerOptions && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-10 overflow-hidden">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-sm z-10 overflow-hidden">
                   <button
                     onClick={() => selectRole('landlord')}
                     disabled={isLoading}
-                    className="w-full px-5 py-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100"
+                    className="w-full px-5 py-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-200"
                   >
                     <div className="font-semibold text-gray-900 text-sm">Landlord</div>
                     <div className="text-xs text-gray-500 mt-0.5">I own 1–3 rental units</div>
@@ -88,7 +88,7 @@ export default function RoleSelectPage() {
                   <button
                     onClick={() => selectRole('caretaker')}
                     disabled={isLoading}
-                    className="w-full px-5 py-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100"
+                    className="w-full px-5 py-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-200"
                   >
                     <div className="font-semibold text-gray-900 text-sm">Caretaker</div>
                     <div className="text-xs text-gray-500 mt-0.5">I manage multiple units for owners</div>

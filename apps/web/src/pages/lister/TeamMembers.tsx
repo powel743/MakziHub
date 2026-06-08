@@ -45,7 +45,7 @@ export default function TeamMembers() {
   if (plan !== 'business') {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
           <Lock className="w-8 h-8 text-gray-400" />
         </div>
         <h2 className="text-xl font-bold text-gray-900 mb-2">Team Members is a Business feature</h2>
@@ -63,7 +63,7 @@ export default function TeamMembers() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold font-display text-gray-900">Team Members</h1>
+            <h1 className="text-2xl font-bold font-display tracking-tight text-gray-900">Team Members</h1>
             <p className="text-sm text-gray-500 mt-0.5">Manage who can post listings on behalf of your agency</p>
           </div>
           <Button onClick={() => setShowInvite(true)} size="sm">
@@ -72,17 +72,17 @@ export default function TeamMembers() {
         </div>
 
         {isLoading ? null : members.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
             <Users className="w-12 h-12 text-gray-200 mx-auto mb-3" />
             <h2 className="font-semibold text-gray-900 mb-2">No team members yet</h2>
             <p className="text-gray-500 text-sm mb-5">Invite agents to post listings under your agency.</p>
             <Button onClick={() => setShowInvite(true)} size="sm"><Plus className="w-4 h-4" /> Invite Member</Button>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-200 bg-gray-50">
                   <th className="px-5 py-3">Member</th>
                   <th className="px-5 py-3">Role</th>
                   <th className="px-5 py-3">Joined</th>

@@ -23,7 +23,7 @@ export function PhotoGallery({ photos, title, estate }: PhotoGalleryProps) {
 
   if (!photos || photos.length === 0) {
     return (
-      <div className="aspect-[16/9] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
+      <div className="aspect-[16/9] bg-gray-100 rounded-xl flex items-center justify-center">
         <div className="text-center text-gray-400">
           <Home className="w-16 h-16 mx-auto mb-2" />
           <p className="text-sm">No photos available</p>
